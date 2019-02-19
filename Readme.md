@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Svetlana Gorbunova](https://up.htmlacademy.ru/ecmascript/8/user/778401).
-* Наставник: `Неизвестно`.
+* Наставник: Арсений Ильяшов.
 
 ---
 
