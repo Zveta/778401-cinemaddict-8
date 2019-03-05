@@ -87,4 +87,4 @@ const cardTemplate = function (movie) {
     </article>`;
 };
 
-export {cardTemplate, generateCard}
+export {cardTemplate, generateCard};
