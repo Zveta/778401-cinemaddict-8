@@ -256,6 +256,7 @@ renderFilters();
 const renderCards = (count, node) => {
   let cardHTML = ``;
   for (let i = 0; i < count; i++) {
+    console.log(_card_template_js__WEBPACK_IMPORTED_MODULE_1__["generateCard"]);
     cardHTML += Object(_card_template_js__WEBPACK_IMPORTED_MODULE_1__["cardTemplate"])(Object(_card_template_js__WEBPACK_IMPORTED_MODULE_1__["generateCard"])());
   }
   node.innerHTML = cardHTML;
