@@ -1,5 +1,5 @@
 import {getFilterElement} from './filter-template.js';
-import {cardTemplate} from './card-template.js';
+import {cardTemplate, generateCard} from './card-template.js';
 
 const filterTypes = [`All`, `Watchlist`, `History`, `Favorites`];
 const cardsNode = document.querySelector(`.films-list__container`);
@@ -30,7 +30,7 @@ renderFilters();
 const renderCards = (count, node) => {
   let cardHTML = ``;
   for (let i = 0; i < count; i++) {
-    cardHTML += cardTemplate;
+    cardHTML += cardTemplate(generateCard());
   }
   node.innerHTML = cardHTML;
 };
