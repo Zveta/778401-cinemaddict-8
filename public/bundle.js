@@ -187,87 +187,86 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
 
 
-const movie = {
-  title: [
-    `Zero`,
-    `One`,
-    `Two`,
-    `Three`,
-    `Four`,
-    `Five`,
-    `Six`,
-    `Seven`,
-    `Eight`,
-    `Nine`,
-    `Ten`,
-    `Star`,
-    `Wars`,
-    `Fantastic`,
-    `Beasts`
-  ][Math.floor(Math.random() * 15)],
-  promoLine: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getPromo"])(`Lorem Ipsum Dolor Sit Amet Consectetur Adipiscing Elit`.split(` `)),
-  description: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getDesc"])(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus`.split(`. `)),
-  picture: [`accused.jpg`, `blackmail.jpg`, `blue-blazes.jpg`, `fuga-da-new-york.jpg`, `moonrise.jpg`, `three-friends.jpg`][Math.floor(Math.random() * 6)],
-  rating: (Math.random() * 10).toFixed(1),
-  year: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(1896, new Date().getFullYear()),
-  time: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(1, 3) + `h&nbsp;` + Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(1, 60) + `m`,
-  director: [
-    `Emmaline Humbertson`,
-    `Herb Hopp`,
-    `Candis Heimer`,
-    `Jamey Fonda`,
-    `Mirian Grose`
-  ][Math.floor(Math.random() * 5)],
-  writer: [
-    `Emmaline Humbertson`,
-    `Herb Hopp`,
-    `Candis Heimer`,
-    `Jamey Fonda`,
-    `Mirian Grose`
-  ][Math.floor(Math.random() * 5)],
-  actors: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getActors"])([
-    `Elizebeth Haig`,
-    `Azalee Lebrun`,
-    `Ty Loken`,
-    `Yolonda Flagler`,
-    `Jone Dagenais`,
-    `Armand Madere`,
-    `Lorine Depaola`,
-    `Maryanna Herndon`,
-    `Otha Dimauro`,
-    `Jenniffer Bayley`]),
-  releaseDate: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["randomDate"])(new Date(1896, 0, 1), new Date()),
-  country: [
-    `Russia`,
-    `USA`,
-    `Italy`,
-    `France`,
-    `Germany`,
-    `Spain`,
-    `Canada`,
-    `Hungary`,
-    `Great Britain`,
-    `Belgium`
-  ][Math.floor(Math.random() * 10)],
-  genre: [
-    `Action`,
-    `Adventure`,
-    `Animation`,
-    `Biography`,
-    `Comedy`,
-    `Crime`,
-    `Documentary`,
-    `Drama`,
-    `Fantasy`,
-    `Horror`,
-    `Mystery`,
-    `Romance`,
-    `Sci-Fi`,
-    `Thriller`][Math.floor(Math.random() * 14)],
-  comments: (Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(0, 100) === 1 ? Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(0, 100) + ` comment` : Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(0, 100) + ` comments`)
-};
-
 const getMovie = function () {
+  const movie = {
+    title: [
+      `Zero`,
+      `One`,
+      `Two`,
+      `Three`,
+      `Four`,
+      `Five`,
+      `Six`,
+      `Seven`,
+      `Eight`,
+      `Nine`,
+      `Ten`,
+      `Star`,
+      `Wars`,
+      `Fantastic`,
+      `Beasts`
+    ][Math.floor(Math.random() * 15)],
+    promoLine: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getPromo"])(`Lorem Ipsum Dolor Sit Amet Consectetur Adipiscing Elit`.split(` `)),
+    description: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getDesc"])(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus`.split(`. `)),
+    picture: [`accused.jpg`, `blackmail.jpg`, `blue-blazes.jpg`, `fuga-da-new-york.jpg`, `moonrise.jpg`, `three-friends.jpg`][Math.floor(Math.random() * 6)],
+    rating: (Math.random() * 10).toFixed(1),
+    year: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(1896, new Date().getFullYear()),
+    time: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(1, 3) + `h&nbsp;` + Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(1, 60) + `m`,
+    director: [
+      `Emmaline Humbertson`,
+      `Herb Hopp`,
+      `Candis Heimer`,
+      `Jamey Fonda`,
+      `Mirian Grose`
+    ][Math.floor(Math.random() * 5)],
+    writer: [
+      `Emmaline Humbertson`,
+      `Herb Hopp`,
+      `Candis Heimer`,
+      `Jamey Fonda`,
+      `Mirian Grose`
+    ][Math.floor(Math.random() * 5)],
+    actors: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getActors"])([
+      `Elizebeth Haig`,
+      `Azalee Lebrun`,
+      `Ty Loken`,
+      `Yolonda Flagler`,
+      `Jone Dagenais`,
+      `Armand Madere`,
+      `Lorine Depaola`,
+      `Maryanna Herndon`,
+      `Otha Dimauro`,
+      `Jenniffer Bayley`]),
+    releaseDate: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["randomDate"])(new Date(1896, 0, 1), new Date()),
+    country: [
+      `Russia`,
+      `USA`,
+      `Italy`,
+      `France`,
+      `Germany`,
+      `Spain`,
+      `Canada`,
+      `Hungary`,
+      `Great Britain`,
+      `Belgium`
+    ][Math.floor(Math.random() * 10)],
+    genre: [
+      `Action`,
+      `Adventure`,
+      `Animation`,
+      `Biography`,
+      `Comedy`,
+      `Crime`,
+      `Documentary`,
+      `Drama`,
+      `Fantasy`,
+      `Horror`,
+      `Mystery`,
+      `Romance`,
+      `Sci-Fi`,
+      `Thriller`][Math.floor(Math.random() * 14)],
+    comments: (Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(0, 100) === 1 ? Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(0, 100) + ` comment` : Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(0, 100) + ` comments`)
+  };
   return movie;
 };
 
@@ -298,34 +297,6 @@ const getFilterElement = function (caption, amount, isChecked = false) {
 
 /***/ }),
 
-/***/ "./src/generate-movies.js":
-/*!********************************!*\
-  !*** ./src/generate-movies.js ***!
-  \********************************/
-/*! exports provided: generateMovies */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "generateMovies", function() { return generateMovies; });
-/* harmony import */ var _data_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./data.js */ "./src/data.js");
-
-
-
-
-const generateMovies = function (amount) {
-  let movies = [];
-  for (let i = 0; i < amount; i++) {
-    movies.push(Object(_data_js__WEBPACK_IMPORTED_MODULE_0__["getMovie"])());
-  }
-  return movies;
-};
-
-
-
-
-/***/ }),
-
 /***/ "./src/main.js":
 /*!*********************!*\
   !*** ./src/main.js ***!
@@ -337,13 +308,12 @@ const generateMovies = function (amount) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filter_template_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filter-template.js */ "./src/filter-template.js");
 /* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
-/* harmony import */ var _generate_movies_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./generate-movies.js */ "./src/generate-movies.js");
-/* harmony import */ var _data_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./data.js */ "./src/data.js");
-/* harmony import */ var _card_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./card.js */ "./src/card.js");
-/* harmony import */ var _popup_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./popup.js */ "./src/popup.js");
+/* harmony import */ var _data_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./data.js */ "./src/data.js");
+/* harmony import */ var _card_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./card.js */ "./src/card.js");
+/* harmony import */ var _popup_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./popup.js */ "./src/popup.js");
 
 
-
+// import {generateMovies} from './generate-movies.js';
 
 
 
@@ -368,6 +338,8 @@ const renderFilters = function () {
 };
 
 renderFilters();
+
+// Еще один вариант отрисовки всех карточек
 
 /*
 const renderCards = function (node, arr) {
@@ -397,8 +369,8 @@ const renderCards = function (node, arr) {
 renderCards(cardsNode, generateMovies(7));*/
 
 const renderCard = function (node, data) {
-  const card = new _card_js__WEBPACK_IMPORTED_MODULE_4__["Card"](data);
-  const popup = new _popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"](data);
+  const card = new _card_js__WEBPACK_IMPORTED_MODULE_3__["Card"](data);
+  const popup = new _popup_js__WEBPACK_IMPORTED_MODULE_4__["Popup"](data);
   node.appendChild(card.render());
 
   card.onEdit = () => {
@@ -416,10 +388,11 @@ const renderCard = function (node, data) {
 
 const renderCards = (count, node) => {
   for (let i = 0; i < count; i++) {
-    const data = Object(_data_js__WEBPACK_IMPORTED_MODULE_3__["getMovie"])();
+    const data = Object(_data_js__WEBPACK_IMPORTED_MODULE_2__["getMovie"])();
     renderCard(node, data);
   }
 };
+
 renderCards(7, cardsNode);
 renderCards(2, topRatedNode);
 renderCards(2, mostCommentNode);
