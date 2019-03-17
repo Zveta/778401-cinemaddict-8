@@ -96,11 +96,12 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Card", function() { return Card; });
-/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
+/* harmony import */ var _component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component.js */ "./src/component.js");
 
 
-class Card {
+class Card extends _component_js__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor(data) {
+    super();
     this._title = data.title;
     this._rating = data.rating;
     this._year = data.year;
@@ -109,16 +110,10 @@ class Card {
     this._picture = data.picture;
     this._description = data.description;
     this._comments = data.comments;
-
-    this._element = null;
   }
 
   _onCommentsLinkClick() {
     return typeof this._onEdit === `function` && this._onEdit();
-  }
-
-  get element() {
-    return this._element;
   }
 
   set onEdit(fn) {
@@ -156,6 +151,44 @@ class Card {
     this._element.querySelector(`.film-card__comments`)
       .removeEventListener(`click`, this._onCommentsLinkClick);
   }
+}
+
+
+
+
+/***/ }),
+
+/***/ "./src/component.js":
+/*!**************************!*\
+  !*** ./src/component.js ***!
+  \**************************/
+/*! exports provided: Component */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Component", function() { return Component; });
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
+
+
+class Component {
+  constructor() {
+    if (new.target === Component) {
+      throw new Error(`Can't instantiate BaseComponent, only concrete one.`);
+    }
+    this._element = null;
+  }
+
+  get element() {
+    return this._element;
+  }
+
+  get template() {
+    throw new Error(`You have to define template.`);
+  }
+
+  bind() {}
+  unbind() {}
 
   render() {
     this._element = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["createElement"])(this.template);
@@ -270,6 +303,15 @@ const getMovie = function () {
   return movie;
 };
 
+/*
+const generateMovies = function (amount) {
+  let movies = [];
+  for (let i = 0; i < amount; i++) {
+    movies.push(getMovie());
+  }
+  return movies;
+};*/
+
 
 
 
@@ -313,7 +355,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _popup_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./popup.js */ "./src/popup.js");
 
 
-// import {generateMovies} from './generate-movies.js';
 
 
 
@@ -338,35 +379,6 @@ const renderFilters = function () {
 };
 
 renderFilters();
-
-// Еще один вариант отрисовки всех карточек
-
-/*
-const renderCards = function (node, arr) {
-  const fragment = document.createDocumentFragment();
-
-  arr.forEach((data) => {
-    const card = new Card(data);
-    const popup = new Popup(data);
-    fragment.appendChild(card.render());
-
-    card.onEdit = () => {
-      popup.render();
-      body.appendChild(popup.element);
-      card.unrender();
-    };
-
-    popup.onEdit = () => {
-      card.render();
-      body.removeChild(popup.element);
-      popup.unrender();
-    };
-  });
-
-  node.appendChild(fragment);
-};
-
-renderCards(cardsNode, generateMovies(7));*/
 
 const renderCard = function (node, data) {
   const card = new _card_js__WEBPACK_IMPORTED_MODULE_3__["Card"](data);
@@ -397,32 +409,6 @@ renderCards(7, cardsNode);
 renderCards(2, topRatedNode);
 renderCards(2, mostCommentNode);
 
-/*
-const get = function (count) {
-  let arr = [];
-  for (let i; i < count; i++) {
-    const n = getMovie();
-    console.log(n);
-    arr.push(n);
-  }
-  console.log(arr);
-};
-get(5);*/
-
-// renderCard(cardsNode);
-
-/*
-const renderCards = (count, node) => {
-  for (let i = 0; i < count; i++) {
-    renderCard(node);
-  }
-};*/
-
-/*
-renderCards(7, cardsNode);
-renderCards(2, topRatedNode);
-renderCards(2, mostCommentNode);*/
-
 const filters = document.querySelectorAll(`.filter`);
 filters.forEach((item) => {
   item.addEventListener(`click`, function () {
@@ -444,11 +430,12 @@ filters.forEach((item) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return Popup; });
-/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
+/* harmony import */ var _component_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./component.js */ "./src/component.js");
 
 
-class Popup {
+class Popup extends _component_js__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor(data) {
+    super();
     this._title = data.title;
     this._promoLine = data.promoLine;
     this._rating = data.rating;
@@ -463,16 +450,10 @@ class Popup {
     this._picture = data.picture;
     this._description = data.description;
     this._comments = data.comments;
-
-    this._element = null;
   }
 
   _onCommentsLinkClick() {
     return typeof this._onEdit === `function` && this._onEdit();
-  }
-
-  get element() {
-    return this._element;
   }
 
   set onEdit(fn) {
@@ -654,17 +635,6 @@ class Popup {
   unbind() {
     this._element.querySelector(`.film-details__close-btn`)
       .removeEventListener(`click`, this._onCommentsLinkClick);
-  }
-
-  render() {
-    this._element = Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["createElement"])(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
   }
 }
 

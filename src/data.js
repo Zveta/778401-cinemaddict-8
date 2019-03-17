@@ -83,4 +83,13 @@ const getMovie = function () {
   return movie;
 };
 
+/*
+const generateMovies = function (amount) {
+  let movies = [];
+  for (let i = 0; i < amount; i++) {
+    movies.push(getMovie());
+  }
+  return movies;
+};*/
+
 export {getMovie};
