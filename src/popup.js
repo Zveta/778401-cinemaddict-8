@@ -1,7 +1,8 @@
-import {createElement} from './utils.js';
+import {Component} from './component.js';
 
-class Popup {
+class Popup extends Component {
   constructor(data) {
+    super();
     this._title = data.title;
     this._promoLine = data.promoLine;
     this._rating = data.rating;
@@ -16,16 +17,10 @@ class Popup {
     this._picture = data.picture;
     this._description = data.description;
     this._comments = data.comments;
-
-    this._element = null;
   }
 
   _onCommentsLinkClick() {
     return typeof this._onEdit === `function` && this._onEdit();
-  }
-
-  get element() {
-    return this._element;
   }
 
   set onEdit(fn) {
@@ -207,17 +202,6 @@ class Popup {
   unbind() {
     this._element.querySelector(`.film-details__close-btn`)
       .removeEventListener(`click`, this._onCommentsLinkClick);
-  }
-
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
   }
 }
 

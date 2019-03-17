@@ -1,7 +1,8 @@
-import {createElement} from './utils.js';
+import {Component} from './component.js';
 
-class Card {
+class Card extends Component {
   constructor(data) {
+    super();
     this._title = data.title;
     this._rating = data.rating;
     this._year = data.year;
@@ -10,16 +11,10 @@ class Card {
     this._picture = data.picture;
     this._description = data.description;
     this._comments = data.comments;
-
-    this._element = null;
   }
 
   _onCommentsLinkClick() {
     return typeof this._onEdit === `function` && this._onEdit();
-  }
-
-  get element() {
-    return this._element;
   }
 
   set onEdit(fn) {
@@ -56,17 +51,6 @@ class Card {
   unbind() {
     this._element.querySelector(`.film-card__comments`)
       .removeEventListener(`click`, this._onCommentsLinkClick);
-  }
-
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
   }
 }
 
