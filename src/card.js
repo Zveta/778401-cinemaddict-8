@@ -1,7 +1,9 @@
-import {createElement} from './utils.js';
+import {Component} from './component.js';
+import moment from 'moment';
 
-class Card {
+class Card extends Component {
   constructor(data) {
+    super();
     this._title = data.title;
     this._rating = data.rating;
     this._year = data.year;
@@ -9,21 +11,20 @@ class Card {
     this._genre = data.genre;
     this._picture = data.picture;
     this._description = data.description;
+    this._userRating = data._userRating;
     this._comments = data.comments;
-
-    this._element = null;
   }
 
   _onCommentsLinkClick() {
-    return typeof this._onEdit === `function` && this._onEdit();
+    return typeof this._onClick === `function` && this._onClick();
   }
 
-  get element() {
-    return this._element;
+  _updateCommentsCount() {
+    this._element.querySelector(`.film-card__comments`).innerHTML = this._comments.length === 1 ? this._comments.length + `comment` : this._comments.length + `comments`;
   }
 
-  set onEdit(fn) {
-    this._onEdit = fn;
+  set onClick(fn) {
+    this._onClick = fn;
   }
 
   get template() {
@@ -32,20 +33,33 @@ class Card {
       <h3 class="film-card__title">${this._title}</h3>
       <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${this._year}</span>
-        <span class="film-card__duration">${this._time}</span>
+        <span class="film-card__year">${moment(this._year).format(`YYYY`)}</span>
+        <span class="film-card__duration">${moment(this._time).hours()}h&nbsp;${moment(this._time).minutes()}m</span>
         <span class="film-card__genre">${this._genre}</span>
       </p>
       <img src="./images/posters/${this._picture}" alt="" class="film-card__poster">
       <p class="film-card__description">${this._description}</p>
-      <button class="film-card__comments">${this._comments}</button>
-
+      <button class="film-card__comments">${this._comments.length === 1 ? `${this._comments.length} comment` : `${this._comments.length} comments`}</button>
       <form class="film-card__controls">
         <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist"><!--Add to watchlist--> WL</button>
         <button class="film-card__controls-item button film-card__controls-item--mark-as-watched"><!--Mark as watched-->WTCHD</button>
         <button class="film-card__controls-item button film-card__controls-item--favorite"><!--Mark as favorite-->FAV</button>
       </form>
     </article>`.trim();
+  }
+
+  update(data) {
+    // this.unbind();
+    this._partialUpdate();
+    // this.bind();
+
+    this._userRating = data.userRating;
+    this._comments = data.comments;
+    this._updateCommentsCount();
+  }
+
+  _partialUpdate() {
+    this._element.innerHTML = this.template;
   }
 
   bind() {
@@ -56,17 +70,6 @@ class Card {
   unbind() {
     this._element.querySelector(`.film-card__comments`)
       .removeEventListener(`click`, this._onCommentsLinkClick);
-  }
-
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
   }
 }
 

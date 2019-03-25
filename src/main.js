@@ -1,6 +1,5 @@
 import {getFilterElement} from './filter-template.js';
 import {getRandomIntgr} from './utils.js';
-// import {generateMovies} from './generate-movies.js';
 import {getMovie} from './data.js';
 import {Card} from './card.js';
 import {Popup} from './popup.js';
@@ -26,47 +25,19 @@ const renderFilters = function () {
 
 renderFilters();
 
-// Еще один вариант отрисовки всех карточек
-
-/*
-const renderCards = function (node, arr) {
-  const fragment = document.createDocumentFragment();
-
-  arr.forEach((data) => {
-    const card = new Card(data);
-    const popup = new Popup(data);
-    fragment.appendChild(card.render());
-
-    card.onEdit = () => {
-      popup.render();
-      body.appendChild(popup.element);
-      card.unrender();
-    };
-
-    popup.onEdit = () => {
-      card.render();
-      body.removeChild(popup.element);
-      popup.unrender();
-    };
-  });
-
-  node.appendChild(fragment);
-};
-
-renderCards(cardsNode, generateMovies(7));*/
-
 const renderCard = function (node, data) {
   const card = new Card(data);
   const popup = new Popup(data);
   node.appendChild(card.render());
 
-  card.onEdit = () => {
+  card.onClick = () => {
     popup.render();
     body.appendChild(popup.element);
-    card.unrender();
   };
 
-  popup.onEdit = () => {
+  popup.onClick = (newObject) => {
+    card.userRating = newObject.userRating;
+    card.comments = newObject.comments;
     card.render();
     body.removeChild(popup.element);
     popup.unrender();
@@ -83,32 +54,6 @@ const renderCards = (count, node) => {
 renderCards(7, cardsNode);
 renderCards(2, topRatedNode);
 renderCards(2, mostCommentNode);
-
-/*
-const get = function (count) {
-  let arr = [];
-  for (let i; i < count; i++) {
-    const n = getMovie();
-    console.log(n);
-    arr.push(n);
-  }
-  console.log(arr);
-};
-get(5);*/
-
-// renderCard(cardsNode);
-
-/*
-const renderCards = (count, node) => {
-  for (let i = 0; i < count; i++) {
-    renderCard(node);
-  }
-};*/
-
-/*
-renderCards(7, cardsNode);
-renderCards(2, topRatedNode);
-renderCards(2, mostCommentNode);*/
 
 const filters = document.querySelectorAll(`.filter`);
 filters.forEach((item) => {
