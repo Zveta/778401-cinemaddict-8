@@ -17740,6 +17740,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+// Комментарий
 class Card extends _component_js__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor(data) {
     super();

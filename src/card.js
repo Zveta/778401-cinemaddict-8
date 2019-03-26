@@ -1,6 +1,7 @@
 import {Component} from './component.js';
 import moment from 'moment';
 
+// Комментарий
 class Card extends Component {
   constructor(data) {
     super();
