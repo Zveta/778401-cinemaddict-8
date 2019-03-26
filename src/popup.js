@@ -1,7 +1,6 @@
 import {Component} from './component.js';
 import moment from 'moment';
 
-// Комментарий для отправки
 class Popup extends Component {
   constructor(data) {
     super();
