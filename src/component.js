@@ -31,7 +31,6 @@ class Component {
   }
 
   update() {}
-
 }
 
 export {Component};
