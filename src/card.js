@@ -1,13 +1,11 @@
 import {Component} from './component.js';
 import moment from 'moment';
 
-// Комментарий
 class Card extends Component {
   constructor(data) {
     super();
     this._title = data.title;
     this._rating = data.rating;
-    this._year = data.year;
     this._time = data.time;
     this._genre = data.genre;
     this._picture = data.picture;
@@ -21,7 +19,7 @@ class Card extends Component {
   }
 
   _updateCommentsCount() {
-    this._element.querySelector(`.film-card__comments`).innerHTML = this._comments.length === 1 ? this._comments.length + `comment` : this._comments.length + `comments`;
+    this._element.querySelector(`.film-card__comments`).innerHTML = this._comments.length === 1 ? this._comments.length + ` comment` : this._comments.length + ` comments`;
   }
 
   set onClick(fn) {
@@ -34,8 +32,8 @@ class Card extends Component {
       <h3 class="film-card__title">${this._title}</h3>
       <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${moment(this._year).format(`YYYY`)}</span>
-        <span class="film-card__duration">${moment(this._time).hours()}h&nbsp;${moment(this._time).minutes()}m</span>
+        <span class="film-card__year">${moment(this._releaseDate).year()}</span>
+        <span class="film-card__duration">${moment.duration(this._time).hours()}h ${moment.duration(this._time).minutes()}m</span>
         <span class="film-card__genre">${this._genre}</span>
       </p>
       <img src="./images/posters/${this._picture}" alt="" class="film-card__poster">
@@ -50,10 +48,6 @@ class Card extends Component {
   }
 
   update(data) {
-    // this.unbind();
-    this._partialUpdate();
-    // this.bind();
-
     this._userRating = data.userRating;
     this._comments = data.comments;
     this._updateCommentsCount();

@@ -9,7 +9,6 @@ class Popup extends Component {
     this._rating = data.rating;
     this._director = data.director;
     this._writer = data.writer;
-    this._year = data.year;
     this._actors = data.actors;
     this._releaseDate = data.releaseDate;
     this._time = data.time;
@@ -34,7 +33,7 @@ class Popup extends Component {
     if (typeof this._onClick === `function`) {
       this._onClick(newData);
     }
-    this.update(newData);
+    return this.update(newData);
   }
 
   _processForm(formData) {
@@ -99,7 +98,7 @@ class Popup extends Component {
           <p class="film-details__comment-text">${comment.text}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${comment.author}</span>
-            <span class="film-details__comment-day">${comment.date} ago</span>
+            <span class="film-details__comment-day">${moment(comment.date).format(`DD MMMM YYYY`)}</span>
           </p>
         </div>
       </li>
@@ -170,11 +169,11 @@ class Popup extends Component {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${moment().format(`Do MMMM YYYY`)} (${this._country})</td>
+              <td class="film-details__cell">${moment(this.releaseDate).format(`DD MMMM YYYY`)} (${this._country})</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${moment(this._time, `h:mm`).format(`h`)}h ${moment(this._time, `h:mm`).format(`mm`)}m</td>
+              <td class="film-details__cell">${moment.duration(this._time).asMinutes()}m</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>

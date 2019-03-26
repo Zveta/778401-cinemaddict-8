@@ -25,9 +25,10 @@ const renderFilters = function () {
 
 renderFilters();
 
-const renderCard = function (node, data) {
-  const card = new Card(data);
-  const popup = new Popup(data);
+const renderCard = function (node) {
+  const component = getMovie();
+  const card = new Card(component);
+  const popup = new Popup(component);
   node.appendChild(card.render());
 
   card.onClick = () => {
@@ -36,18 +37,17 @@ const renderCard = function (node, data) {
   };
 
   popup.onClick = (newObject) => {
-    card.userRating = newObject.userRating;
-    card.comments = newObject.comments;
-    card.render();
+    component.userRating = newObject.userRating;
+    component.comments = newObject.comments;
     body.removeChild(popup.element);
+    card.update(component);
     popup.unrender();
   };
 };
 
 const renderCards = (count, node) => {
   for (let i = 0; i < count; i++) {
-    const data = getMovie();
-    renderCard(node, data);
+    renderCard(node);
   }
 };
 

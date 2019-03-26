@@ -17740,13 +17740,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// Комментарий
 class Card extends _component_js__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   constructor(data) {
     super();
     this._title = data.title;
     this._rating = data.rating;
-    this._year = data.year;
     this._time = data.time;
     this._genre = data.genre;
     this._picture = data.picture;
@@ -17760,7 +17758,7 @@ class Card extends _component_js__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   }
 
   _updateCommentsCount() {
-    this._element.querySelector(`.film-card__comments`).innerHTML = this._comments.length === 1 ? this._comments.length + `comment` : this._comments.length + `comments`;
+    this._element.querySelector(`.film-card__comments`).innerHTML = this._comments.length === 1 ? this._comments.length + ` comment` : this._comments.length + ` comments`;
   }
 
   set onClick(fn) {
@@ -17773,8 +17771,8 @@ class Card extends _component_js__WEBPACK_IMPORTED_MODULE_0__["Component"] {
       <h3 class="film-card__title">${this._title}</h3>
       <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${moment__WEBPACK_IMPORTED_MODULE_1___default()(this._year).format(`YYYY`)}</span>
-        <span class="film-card__duration">${moment__WEBPACK_IMPORTED_MODULE_1___default()(this._time).hours()}h&nbsp;${moment__WEBPACK_IMPORTED_MODULE_1___default()(this._time).minutes()}m</span>
+        <span class="film-card__year">${moment__WEBPACK_IMPORTED_MODULE_1___default()(this._releaseDate).year()}</span>
+        <span class="film-card__duration">${moment__WEBPACK_IMPORTED_MODULE_1___default.a.duration(this._time).hours()}h ${moment__WEBPACK_IMPORTED_MODULE_1___default.a.duration(this._time).minutes()}m</span>
         <span class="film-card__genre">${this._genre}</span>
       </p>
       <img src="./images/posters/${this._picture}" alt="" class="film-card__poster">
@@ -17789,10 +17787,6 @@ class Card extends _component_js__WEBPACK_IMPORTED_MODULE_0__["Component"] {
   }
 
   update(data) {
-    // this.unbind();
-    this._partialUpdate();
-    // this.bind();
-
     this._userRating = data.userRating;
     this._comments = data.comments;
     this._updateCommentsCount();
@@ -17905,8 +17899,7 @@ const getMovie = function () {
     description: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getDesc"])(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus`.split(`. `)),
     picture: [`accused.jpg`, `blackmail.jpg`, `blue-blazes.jpg`, `fuga-da-new-york.jpg`, `moonrise.jpg`, `three-friends.jpg`][Math.floor(Math.random() * 6)],
     rating: (Math.random() * 10).toFixed(1),
-    year: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(1896, new Date().getFullYear()) + `-` + Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(1, 12) + `-` + Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(1, 31),
-    time: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(0, 23) + `:` + Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(0, 59),
+    time: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(5, 360) * 60000,
     director: [
       `Emmaline Humbertson`,
       `Herb Hopp`,
@@ -17965,21 +17958,12 @@ const getMovie = function () {
         emoji: `😴`,
         text: `So long-long story, boring!`,
         author: `Tim Macoveev`,
-        date: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["getRandomIntgr"])(1, 29) + `days ago`,
+        date: Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["randomDate"])(new Date(2000, 0, 1), new Date()),
       }
     ]
   };
   return movie;
 };
-
-/*
-const generateMovies = function (amount) {
-  let movies = [];
-  for (let i = 0; i < amount; i++) {
-    movies.push(getMovie());
-  }
-  return movies;
-};*/
 
 
 
@@ -18049,9 +18033,10 @@ const renderFilters = function () {
 
 renderFilters();
 
-const renderCard = function (node, data) {
-  const card = new _card_js__WEBPACK_IMPORTED_MODULE_3__["Card"](data);
-  const popup = new _popup_js__WEBPACK_IMPORTED_MODULE_4__["Popup"](data);
+const renderCard = function (node) {
+  const component = Object(_data_js__WEBPACK_IMPORTED_MODULE_2__["getMovie"])();
+  const card = new _card_js__WEBPACK_IMPORTED_MODULE_3__["Card"](component);
+  const popup = new _popup_js__WEBPACK_IMPORTED_MODULE_4__["Popup"](component);
   node.appendChild(card.render());
 
   card.onClick = () => {
@@ -18060,18 +18045,17 @@ const renderCard = function (node, data) {
   };
 
   popup.onClick = (newObject) => {
-    card.userRating = newObject.userRating;
-    card.comments = newObject.comments;
-    card.render();
+    component.userRating = newObject.userRating;
+    component.comments = newObject.comments;
     body.removeChild(popup.element);
+    card.update(component);
     popup.unrender();
   };
 };
 
 const renderCards = (count, node) => {
   for (let i = 0; i < count; i++) {
-    const data = Object(_data_js__WEBPACK_IMPORTED_MODULE_2__["getMovie"])();
-    renderCard(node, data);
+    renderCard(node);
   }
 };
 
@@ -18114,7 +18098,6 @@ class Popup extends _component_js__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     this._rating = data.rating;
     this._director = data.director;
     this._writer = data.writer;
-    this._year = data.year;
     this._actors = data.actors;
     this._releaseDate = data.releaseDate;
     this._time = data.time;
@@ -18139,7 +18122,7 @@ class Popup extends _component_js__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     if (typeof this._onClick === `function`) {
       this._onClick(newData);
     }
-    this.update(newData);
+    return this.update(newData);
   }
 
   _processForm(formData) {
@@ -18204,7 +18187,7 @@ class Popup extends _component_js__WEBPACK_IMPORTED_MODULE_0__["Component"] {
           <p class="film-details__comment-text">${comment.text}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${comment.author}</span>
-            <span class="film-details__comment-day">${comment.date} ago</span>
+            <span class="film-details__comment-day">${moment__WEBPACK_IMPORTED_MODULE_1___default()(comment.date).format(`DD MMMM YYYY`)}</span>
           </p>
         </div>
       </li>
@@ -18275,11 +18258,11 @@ class Popup extends _component_js__WEBPACK_IMPORTED_MODULE_0__["Component"] {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${moment__WEBPACK_IMPORTED_MODULE_1___default()().format(`Do MMMM YYYY`)} (${this._country})</td>
+              <td class="film-details__cell">${moment__WEBPACK_IMPORTED_MODULE_1___default()(this.releaseDate).format(`DD MMMM YYYY`)} (${this._country})</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${moment__WEBPACK_IMPORTED_MODULE_1___default()(this._time, `h:mm`).format(`h`)}h ${moment__WEBPACK_IMPORTED_MODULE_1___default()(this._time, `h:mm`).format(`mm`)}m</td>
+              <td class="film-details__cell">${moment__WEBPACK_IMPORTED_MODULE_1___default.a.duration(this._time).asMinutes()}m</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
