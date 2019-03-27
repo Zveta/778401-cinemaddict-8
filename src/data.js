@@ -23,8 +23,7 @@ const getMovie = function () {
     description: getDesc(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus`.split(`. `)),
     picture: [`accused.jpg`, `blackmail.jpg`, `blue-blazes.jpg`, `fuga-da-new-york.jpg`, `moonrise.jpg`, `three-friends.jpg`][Math.floor(Math.random() * 6)],
     rating: (Math.random() * 10).toFixed(1),
-    year: getRandomIntgr(1896, new Date().getFullYear()),
-    time: getRandomIntgr(1, 3) + `h&nbsp;` + getRandomIntgr(1, 60) + `m`,
+    time: getRandomIntgr(5, 360) * 60000,
     director: [
       `Emmaline Humbertson`,
       `Herb Hopp`,
@@ -78,18 +77,16 @@ const getMovie = function () {
       `Romance`,
       `Sci-Fi`,
       `Thriller`][Math.floor(Math.random() * 14)],
-    comments: (getRandomIntgr(0, 100) === 1 ? getRandomIntgr(0, 100) + ` comment` : getRandomIntgr(0, 100) + ` comments`)
+    comments: [
+      {
+        emoji: `😴`,
+        text: `So long-long story, boring!`,
+        author: `Tim Macoveev`,
+        date: randomDate(new Date(2000, 0, 1), new Date()),
+      }
+    ]
   };
   return movie;
 };
-
-/*
-const generateMovies = function (amount) {
-  let movies = [];
-  for (let i = 0; i < amount; i++) {
-    movies.push(getMovie());
-  }
-  return movies;
-};*/
 
 export {getMovie};

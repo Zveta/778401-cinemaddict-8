@@ -1,4 +1,5 @@
 import {Component} from './component.js';
+import moment from 'moment';
 
 class Popup extends Component {
   constructor(data) {
@@ -8,7 +9,6 @@ class Popup extends Component {
     this._rating = data.rating;
     this._director = data.director;
     this._writer = data.writer;
-    this._year = data.year;
     this._actors = data.actors;
     this._releaseDate = data.releaseDate;
     this._time = data.time;
@@ -17,14 +17,114 @@ class Popup extends Component {
     this._picture = data.picture;
     this._description = data.description;
     this._comments = data.comments;
+
+    this._userRating = data._userRating;
+    this._commentsCount = data.commentsCount;
+
+    this._onClick = null;
+    this._onCloseClick = this._onCloseClick.bind(this);
+    this._onRatingClick = this._onRatingClick.bind(this);
+    this.__onCommentKeydown = this.__onCommentKeydown.bind(this);
   }
 
-  _onCommentsLinkClick() {
-    return typeof this._onEdit === `function` && this._onEdit();
+  _onCloseClick() {
+    const formData = new FormData(this._element.querySelector(`.film-details__inner`));
+    const newData = this._processForm(formData);
+    if (typeof this._onClick === `function`) {
+      this._onClick(newData);
+    }
+    return this.update(newData);
   }
 
-  set onEdit(fn) {
-    this._onEdit = fn;
+  _processForm(formData) {
+    const entry = {
+      comments: this._comments,
+      userRating: this._userRating,
+    };
+
+    const popupMapper = Popup.createMapper(entry);
+
+    for (const [property, value] of formData.entries()) {
+      if (popupMapper[property]) {
+        popupMapper[property](value);
+      }
+    }
+
+    return entry;
+  }
+
+  static createMapper(target) {
+    return {
+      rating: (value) => (target.userRating = value),
+      comments: (value) => (target.comments = value)
+    };
+  }
+
+  _onRatingClick(evt) {
+    if (evt.target.classList.contains(`film-details__user-rating-label`)) {
+      this._userRating = evt.target.innerText;
+      this.unbind();
+      this._partialUpdate();
+      this.bind();
+    }
+  }
+
+  __onCommentKeydown(evt) {
+    if (evt.ctrlKey && evt.keyCode === 13) {
+      evt.preventDefault();
+      const newComment = {};
+      const message = this._element.querySelector(`.film-details__comment-input`);
+      newComment.emoji = this._element.querySelector(`.film-details__emoji-item:checked + label`).textContent;
+      newComment.text = message.value;
+      newComment.author = `me`;
+      newComment.date = moment().format(`Do MMMM YY`);
+
+      this._comments.push(newComment);
+      message.value = ``;
+
+      this.unbind();
+      this._partialUpdate();
+      this.bind();
+    }
+  }
+
+  get getComments() {
+    let commentsHTML = ``;
+    this._comments.forEach(function (comment) {
+      const commentTemplate = `
+      <li class="film-details__comment">
+        <span class="film-details__comment-emoji">${comment.emoji}</span>
+        <div>
+          <p class="film-details__comment-text">${comment.text}</p>
+          <p class="film-details__comment-info">
+            <span class="film-details__comment-author">${comment.author}</span>
+            <span class="film-details__comment-day">${moment(comment.date).format(`DD MMMM YYYY`)}</span>
+          </p>
+        </div>
+      </li>
+      `;
+      commentsHTML += commentTemplate;
+    });
+    return commentsHTML;
+  }
+
+  _getRatingButtons(number) {
+    let ratingHTML = ``;
+    for (let i = 0; i < 10; i++) {
+      const ratingTemplate = `
+        <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${i}" id="rating-${i}" ${ i === +number ? `checked` : ``}>
+        <label class="film-details__user-rating-label" for="rating-${i}">${i}</label>`;
+      ratingHTML += ratingTemplate;
+    }
+    return ratingHTML;
+  }
+
+  _partialUpdate() {
+    this._element.innerHTML = this.template;
+  }
+
+  set onClick(fn) {
+    this._onClick = fn;
   }
 
   get template() {
@@ -50,7 +150,7 @@ class Popup extends Component {
 
             <div class="film-details__rating">
               <p class="film-details__total-rating">${this._rating}</p>
-              <p class="film-details__user-rating">Your rate 8</p>
+              <p class="film-details__user-rating">${this._userRating ? `Your rate ${this._userRating}` : ``}</p>
             </div>
           </div>
 
@@ -69,11 +169,11 @@ class Popup extends Component {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${this._releaseDate} (${this._country})</td>
+              <td class="film-details__cell">${moment(this.releaseDate).format(`DD MMMM YYYY`)} (${this._country})</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${this._time}</td>
+              <td class="film-details__cell">${moment.duration(this._time).asMinutes()}m</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
@@ -104,19 +204,10 @@ class Popup extends Component {
       </section>
 
       <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">1</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments.length}</span></h3>
 
         <ul class="film-details__comments-list">
-          <li class="film-details__comment">
-            <span class="film-details__comment-emoji">😴</span>
-            <div>
-              <p class="film-details__comment-text">So long-long story, boring!</p>
-              <p class="film-details__comment-info">
-                <span class="film-details__comment-author">Tim Macoveev</span>
-                <span class="film-details__comment-day">3 days ago</span>
-              </p>
-            </div>
-          </li>
+          ${this.getComments}
         </ul>
 
         <div class="film-details__new-comment">
@@ -158,33 +249,7 @@ class Popup extends Component {
             <p class="film-details__user-rating-feelings">How you feel it?</p>
 
             <div class="film-details__user-rating-score">
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
-              <label class="film-details__user-rating-label" for="rating-1">1</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
-              <label class="film-details__user-rating-label" for="rating-2">2</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
-              <label class="film-details__user-rating-label" for="rating-3">3</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
-              <label class="film-details__user-rating-label" for="rating-4">4</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" checked>
-              <label class="film-details__user-rating-label" for="rating-5">5</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
-              <label class="film-details__user-rating-label" for="rating-6">6</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
-              <label class="film-details__user-rating-label" for="rating-7">7</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
-              <label class="film-details__user-rating-label" for="rating-8">8</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9">
-              <label class="film-details__user-rating-label" for="rating-9">9</label>
-
+              ${this._getRatingButtons(this._userRating)}
             </div>
           </section>
         </div>
@@ -196,12 +261,25 @@ class Popup extends Component {
 
   bind() {
     this._element.querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, this._onCommentsLinkClick.bind(this));
+      .addEventListener(`click`, this._onCloseClick);
+    this._element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this.__onCommentKeydown);
+    this._element.querySelectorAll(`.film-details__user-rating-label`).forEach((item) => {
+      item.addEventListener(`click`, this._onRatingClick);
+    });
   }
 
   unbind() {
     this._element.querySelector(`.film-details__close-btn`)
-      .removeEventListener(`click`, this._onCommentsLinkClick);
+      .removeEventListener(`click`, this._onCloseClick);
+    this._element.querySelector(`.film-details__comment-input`).removeEventListener(`keydown`, this.__onCommentKeydown);
+    this._element.querySelectorAll(`.film-details__user-rating-label`).forEach((item) => {
+      item.removeEventListener(`click`, this._onRatingClick);
+    });
+  }
+
+  update(data) {
+    this._userRating = data.userRating;
+    this._comments = data.comments;
   }
 }
 
