@@ -12,18 +12,84 @@ class Card extends Component {
     this._description = data.description;
     this._userRating = data._userRating;
     this._comments = data.comments;
+    this._isWatched = data.isWatched;
+    this._isToWatch = data.isToWatch;
+
+    this._onAddToWatchList = null;
+    this._onMarkAsWatched = null;
+    this._onCommentsLinkClick = this._onCommentsLinkClick.bind(this);
+    this._onAddToWatchListClick = this._onAddToWatchListClick.bind(this);
+    this._onMarkAsWatchedClick = this._onMarkAsWatchedClick.bind(this);
   }
 
   _onCommentsLinkClick() {
     return typeof this._onClick === `function` && this._onClick();
   }
 
-  _updateCommentsCount() {
-    this._element.querySelector(`.film-card__comments`).innerHTML = this._comments.length === 1 ? this._comments.length + ` comment` : this._comments.length + ` comments`;
+  _onAddToWatchListClick(evt) {
+    evt.preventDefault();
+    this._isToWatch = !this._isToWatch;
+    // return typeof this._onClick === `function` && this._onAddToWatchList();
+    const formData = new FormData(this._element.querySelector(`.film-card__controls`));
+    const newData = this._processForm(formData);
+    if (typeof this._onAddToWatchList === `function`) {
+      this._onAddToWatchList(newData);
+    }
+    return this.update(newData);
+  }
+
+  _onMarkAsWatchedClick(evt) {
+    evt.preventDefault();
+    this._isWatched = !this._isWatched;
+    // return typeof this._onClick === `function` && this._onMarkAsWatchedClick();
+    const formData = new FormData(this._element.querySelector(`.film-card__controls`));
+    const newData = this._processForm(formData);
+    if (typeof this._onMarkAsWatched === `function`) {
+      this._onMarkAsWatched(newData);
+    }
+    return this.update(newData);
   }
 
   set onClick(fn) {
     this._onClick = fn;
+  }
+
+  set onAddToWatchList(fn) {
+    this._onAddToWatchList = fn;
+  }
+
+  set onMarkAsWatched(fn) {
+    this._onMarkAsWatched = fn;
+  }
+
+  _processForm(formData) {
+    const entry = {
+      comments: this._comments,
+      isToWatch: this._isToWatch,
+      isWatched: this._isWatched
+    };
+
+    const cardMapper = Card.createMapper(entry);
+
+    for (const [property, value] of formData.entries()) {
+      if (cardMapper[property]) {
+        cardMapper[property](value);
+      }
+    }
+
+    return entry;
+  }
+
+  static createMapper(target) {
+    return {
+      comments: (value) => (target.comments = value),
+      isToWatch: (value) => (target.isToWatch = value),
+      isWatched: (value) => (target.isWatched = value)
+    };
+  }
+
+  _updateCommentsCount() {
+    this._element.querySelector(`.film-card__comments`).innerHTML = this._comments.length === 1 ? this._comments.length + ` comment` : this._comments.length + ` comments`;
   }
 
   get template() {
@@ -48,9 +114,13 @@ class Card extends Component {
   }
 
   update(data) {
-    this._userRating = data.userRating;
-    this._comments = data.comments;
+    this._isWatched = data.isWatched;
+    this._isToWatch = data.isToWatch;
     this._updateCommentsCount();
+
+    this.unbind();
+    this._partialUpdate();
+    this.bind();
   }
 
   _partialUpdate() {
@@ -60,12 +130,19 @@ class Card extends Component {
   bind() {
     this._element.querySelector(`.film-card__comments`)
         .addEventListener(`click`, this._onCommentsLinkClick.bind(this));
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`)
+        .addEventListener(`click`, this._onMarkAsWatchedClick);
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`)
+        .addEventListener(`click`, this._onAddToWatchListClick);
   }
 
   unbind() {
     this._element.querySelector(`.film-card__comments`)
       .removeEventListener(`click`, this._onCommentsLinkClick);
+    this._element.querySelector(`.film-card__controls-item--mark-as-watched`)
+        .removeEventListener(`click`, this._onMarkAsWatchedClick);
+    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`)
+        .removeEventListener(`click`, this._onAddToWatchListClick);
   }
 }
-
 export {Card};
