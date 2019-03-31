@@ -56,8 +56,13 @@ const renderFilters = function (filters) {
     const filterComponent = new Filter(filter);
     filtersNode.insertBefore(filterComponent.render(), statsBtn);
     filterComponent.onFilter = () => {
+      const statsSection = document.querySelector(`.statistic `);
       cardsNode.innerHTML = ``;
       renderCards(filterCards(initialCards, filter.caption.toLowerCase()));
+      if (filmsSection.classList.contains(`visually-hidden`) && statsSection !== null) {
+        filmsSection.classList.remove(`visually-hidden`);
+        statsSection.classList.add(`visually-hidden`);
+      }
     };
   }
 };
