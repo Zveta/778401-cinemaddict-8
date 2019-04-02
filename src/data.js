@@ -62,21 +62,7 @@ const getMovie = function () {
       `Great Britain`,
       `Belgium`
     ][Math.floor(Math.random() * 10)],
-    genre: [
-      `Action`,
-      `Adventure`,
-      `Animation`,
-      `Biography`,
-      `Comedy`,
-      `Crime`,
-      `Documentary`,
-      `Drama`,
-      `Fantasy`,
-      `Horror`,
-      `Mystery`,
-      `Romance`,
-      `Sci-Fi`,
-      `Thriller`][Math.floor(Math.random() * 14)],
+    genre: [`Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`][Math.floor(Math.random() * 5)],
     comments: [
       {
         emoji: `😴`,
@@ -84,9 +70,48 @@ const getMovie = function () {
         author: `Tim Macoveev`,
         date: randomDate(new Date(2000, 0, 1), new Date()),
       }
-    ]
+    ],
+    isWatched: false,
+    isToWatch: false
   };
   return movie;
 };
 
-export {getMovie};
+const getCards = () => {
+  const cardsArr = [];
+  for (let i = 0; i < getRandomIntgr(1, 20); i++) {
+    cardsArr.push(getMovie());
+  }
+  return cardsArr;
+};
+
+const filtersArr = [
+  {
+    caption: `All`,
+    amount: getRandomIntgr(1, 10),
+    isChecked: true
+  },
+  {
+    caption: `Watchlist`,
+    amount: getRandomIntgr(1, 10),
+    isChecked: false
+  },
+  {
+    caption: `History`,
+    amount: getRandomIntgr(1, 10),
+    isChecked: false
+  },
+  {
+    caption: `Favorites`,
+    amount: getRandomIntgr(1, 10),
+    isChecked: false
+  }
+];
+
+const statsData = {
+  moviesWatched: 0,
+  totalTime: 0,
+  topGenre: ``
+};
+
+export {getCards, filtersArr, statsData};

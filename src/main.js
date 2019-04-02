@@ -1,64 +1,98 @@
-import {getFilterElement} from './filter-template.js';
-import {getRandomIntgr} from './utils.js';
-import {getMovie} from './data.js';
+import {getCards, filtersArr} from './data.js';
 import {Card} from './card.js';
 import {Popup} from './popup.js';
+import {Filter} from './filter.js';
+import {renderChart} from './stats.js';
 
-const filterTypes = [`All`, `Watchlist`, `History`, `Favorites`];
 const body = document.querySelector(`body`);
 const cardsNode = document.querySelector(`.films-list__container`);
 const filtersNode = document.querySelector(`.main-navigation`);
-const topRatedNode = document.querySelector(`.top-rated`);
-const mostCommentNode = document.querySelector(`.most-commented`);
+const statsBtn = document.querySelector(`.main-navigation__item--additional`);
+const filmsSection = document.querySelector(`.films `);
 
-const renderFilters = function () {
-  let filterHTML = ``;
-  filterTypes.forEach(function (element) {
-    let checked = false;
-    if (element === `All`) {
-      checked = true;
-    }
-    filterHTML += getFilterElement(element, getRandomIntgr(1, 7), checked);
-  });
-  filtersNode.insertAdjacentHTML(`afterbegin`, filterHTML);
+const initialCards = getCards();
+
+const updateCards = (cards, cardToUpdate, newCard) => {
+  const index = cards.findIndex((it) => it === cardToUpdate);
+  cards[index] = Object.assign({}, cardToUpdate, newCard);
+  return cards[index];
 };
 
-renderFilters();
+const renderCards = (cards) => {
+  for (let card of cards) {
+    const cardComponent = new Card(card);
+    const popupComponent = new Popup(card);
 
-const renderCard = function (node) {
-  const component = getMovie();
-  const card = new Card(component);
-  const popup = new Popup(component);
-  node.appendChild(card.render());
+    cardComponent.onClick = () => {
+      popupComponent.render();
+      body.appendChild(popupComponent.element);
+    };
 
-  card.onClick = () => {
-    popup.render();
-    body.appendChild(popup.element);
-  };
+    popupComponent.onClick = (newObject) => {
+      const updatedCard = updateCards(cards, card, newObject);
+      cardComponent.update(updatedCard);
+      cardComponent.render();
+      body.removeChild(popupComponent.element);
+      popupComponent.unrender();
+    };
 
-  popup.onClick = (newObject) => {
-    component.userRating = newObject.userRating;
-    component.comments = newObject.comments;
-    body.removeChild(popup.element);
-    card.update(component);
-    popup.unrender();
-  };
-};
+    cardComponent.onAddToWatchList = (newObject) => {
+      const updatedCard = updateCards(cards, card, newObject);
+      card.isToWatch = newObject.isToWatch;
+      const newCardComponent = cardComponent.update(updatedCard);
+      body.replaceChild(cardComponent.element, newCardComponent.element);
+    };
 
-const renderCards = (count, node) => {
-  for (let i = 0; i < count; i++) {
-    renderCard(node);
+    cardComponent.onMarkAsWatched = (newObject) => {
+      card.isWatched = newObject.isWatched;
+    };
+
+    cardsNode.appendChild(cardComponent.render());
   }
 };
 
-renderCards(7, cardsNode);
-renderCards(2, topRatedNode);
-renderCards(2, mostCommentNode);
+const renderFilters = function (filters) {
+  for (const filter of filters) {
+    const filterComponent = new Filter(filter);
+    filtersNode.insertBefore(filterComponent.render(), statsBtn);
+    filterComponent.onFilter = () => {
+      const statsSection = document.querySelector(`.statistic `);
+      cardsNode.innerHTML = ``;
+      renderCards(filterCards(initialCards, filter.caption.toLowerCase()));
+      if (filmsSection.classList.contains(`visually-hidden`) && statsSection !== null) {
+        filmsSection.classList.remove(`visually-hidden`);
+        statsSection.classList.add(`visually-hidden`);
+      }
+    };
+  }
+};
 
-const filters = document.querySelectorAll(`.filter`);
-filters.forEach((item) => {
-  item.addEventListener(`click`, function () {
-    cardsNode.innerHTML = ``;
-    renderCards(getRandomIntgr(0, 10), cardsNode);
-  });
-});
+const filterCards = function (cards, filterType) {
+  switch (filterType) {
+    case `all`:
+      return cards;
+
+    case `watchlist`:
+      return cards.filter((item) => item.isToWatch === true);
+
+    case `history`:
+      return cards.filter((item) => item.isWatched === true);
+
+    default:
+      return cards;
+  }
+};
+
+const renderPage = function () {
+  renderFilters(filtersArr);
+  renderCards(initialCards);
+};
+
+renderPage();
+
+const onStatsBtnClick = function (evt) {
+  evt.preventDefault();
+  filmsSection.classList.add(`visually-hidden`);
+  renderChart(initialCards);
+};
+statsBtn.addEventListener(`click`, onStatsBtnClick);
