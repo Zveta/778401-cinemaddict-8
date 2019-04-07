@@ -10,7 +10,7 @@ const renderChart = function (cards) {
     return card.isWatched === true;
   });
 
-  const totalDuration = watchedMovies.reduce((sum, elem) => sum + elem.time, 0);
+  const totalDuration = watchedMovies.reduce((sum, elem) => sum + elem.runtime, 0);
 
   const watchedGenres = watchedMovies.map((elem) => elem.genre);
 
@@ -66,7 +66,7 @@ const renderChart = function (cards) {
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
-          <p class="statistic__item-text">${moment.duration(totalDuration).hours()}<span class="statistic__item-description">h</span> ${moment.duration(totalDuration).minutes()}<span class="statistic__item-description">m</span></p>
+          <p class="statistic__item-text">${moment.duration(totalDuration * 60000).hours()}<span class="statistic__item-description">h</span> ${moment.duration(totalDuration * 60000).minutes()}<span class="statistic__item-description">m</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
