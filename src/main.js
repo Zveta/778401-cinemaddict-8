@@ -1,22 +1,20 @@
-import {getCards, filtersArr} from './data.js';
+import {filtersArr} from './data.js';
 import {Card} from './card.js';
 import {Popup} from './popup.js';
 import {Filter} from './filter.js';
 import {renderChart} from './stats.js';
+import {API} from './backend.js';
+
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
+const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
+
+const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 
 const body = document.querySelector(`body`);
 const cardsNode = document.querySelector(`.films-list__container`);
 const filtersNode = document.querySelector(`.main-navigation`);
 const statsBtn = document.querySelector(`.main-navigation__item--additional`);
 const filmsSection = document.querySelector(`.films `);
-
-const initialCards = getCards();
-
-const updateCards = (cards, cardToUpdate, newCard) => {
-  const index = cards.findIndex((it) => it === cardToUpdate);
-  cards[index] = Object.assign({}, cardToUpdate, newCard);
-  return cards[index];
-};
 
 const renderCards = (cards) => {
   for (let card of cards) {
@@ -28,30 +26,41 @@ const renderCards = (cards) => {
       body.appendChild(popupComponent.element);
     };
 
+    cardComponent.onAddToWatchList = () => {
+      card.isWatchlist = !card.isWatchlist;
+      api.updateCard({id: card.id, data: card.toRAW()})
+      .then((newCard) => {
+        cardComponent.update(newCard);
+      });
+    };
+    cardComponent.onMarkAsWatched = () => {
+      card.isWatched = !card.isWatched;
+      api.updateCard({id: card.id, data: card.toRAW()})
+      .then((newCard) => {
+        cardComponent.update(newCard);
+      });
+    };
+
     popupComponent.onClick = (newObject) => {
-      const updatedCard = updateCards(cards, card, newObject);
-      cardComponent.update(updatedCard);
-      cardComponent.render();
-      body.removeChild(popupComponent.element);
-      popupComponent.unrender();
-    };
-
-    cardComponent.onAddToWatchList = (newObject) => {
-      const updatedCard = updateCards(cards, card, newObject);
-      card.isToWatch = newObject.isToWatch;
-      const newCardComponent = cardComponent.update(updatedCard);
-      body.replaceChild(cardComponent.element, newCardComponent.element);
-    };
-
-    cardComponent.onMarkAsWatched = (newObject) => {
-      card.isWatched = newObject.isWatched;
+      card.comments = newObject.comments;
+      card.userRating = newObject.userRating;
+      api.updateCard({id: card.id, data: card.toRAW()})
+      .then(() => {
+        cardComponent.update(card);
+        cardComponent.render();
+        body.removeChild(popupComponent.element);
+        popupComponent.unrender();
+      })
+      .catch((err) => {
+        throw err;
+      });
     };
 
     cardsNode.appendChild(cardComponent.render());
   }
 };
 
-const renderFilters = function (filters) {
+const renderFilters = function (filters, initialCards) {
   for (const filter of filters) {
     const filterComponent = new Filter(filter);
     filtersNode.insertBefore(filterComponent.render(), statsBtn);
@@ -73,7 +82,7 @@ const filterCards = function (cards, filterType) {
       return cards;
 
     case `watchlist`:
-      return cards.filter((item) => item.isToWatch === true);
+      return cards.filter((item) => item.isWatchlist === true);
 
     case `history`:
       return cards.filter((item) => item.isWatched === true);
@@ -83,16 +92,15 @@ const filterCards = function (cards, filterType) {
   }
 };
 
-const renderPage = function () {
-  renderFilters(filtersArr);
+api.getCards()
+.then((cards) => {
+  const initialCards = cards;
   renderCards(initialCards);
-};
-
-renderPage();
-
-const onStatsBtnClick = function (evt) {
-  evt.preventDefault();
-  filmsSection.classList.add(`visually-hidden`);
-  renderChart(initialCards);
-};
-statsBtn.addEventListener(`click`, onStatsBtnClick);
+  renderFilters(filtersArr, initialCards);
+  const onStatsBtnClick = function (evt) {
+    evt.preventDefault();
+    filmsSection.classList.add(`visually-hidden`);
+    renderChart(initialCards);
+  };
+  statsBtn.addEventListener(`click`, onStatsBtnClick);
+});

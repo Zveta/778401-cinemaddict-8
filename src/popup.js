@@ -4,27 +4,33 @@ import moment from 'moment';
 class Popup extends Component {
   constructor(data) {
     super();
+    this._id = data.id;
     this._title = data.title;
-    this._promoLine = data.promoLine;
+    this._alternativeTitle = data.alternativeTitle;
     this._rating = data.rating;
     this._director = data.director;
-    this._writer = data.writer;
+    this._writers = data.writers;
     this._actors = data.actors;
     this._releaseDate = data.releaseDate;
-    this._time = data.time;
+    this._runtime = data.runtime;
     this._country = data.country;
     this._genre = data.genre;
-    this._picture = data.picture;
+    this._poster = data.poster;
     this._description = data.description;
     this._comments = data.comments;
-
-    this._userRating = data._userRating;
+    this._ageRating = data.ageRating;
+    this._userRating = data.userRating;
     this._commentsCount = data.commentsCount;
+    // this._emotions = {
+    //   'sleeping': `😴`,
+    //   'neutral-face': `😐`,
+    //   'grinning': `😀`
+    // };
 
     this._onClick = null;
     this._onCloseClick = this._onCloseClick.bind(this);
     this._onRatingClick = this._onRatingClick.bind(this);
-    this.__onCommentKeydown = this.__onCommentKeydown.bind(this);
+    this._onCommentKeydown = this._onCommentKeydown.bind(this);
   }
 
   _onCloseClick() {
@@ -69,15 +75,31 @@ class Popup extends Component {
     }
   }
 
-  __onCommentKeydown(evt) {
+  _getEmotion(emotion) {
+    switch (emotion) {
+      case `😀`:
+        return `grinning`;
+
+      case `😐`:
+        return `neutral-face`;
+
+      case `😴`:
+        return `sleeping`;
+
+      default:
+        return ``;
+    }
+  }
+
+  _onCommentKeydown(evt) {
     if (evt.ctrlKey && evt.keyCode === 13) {
       evt.preventDefault();
       const newComment = {};
       const message = this._element.querySelector(`.film-details__comment-input`);
-      newComment.emoji = this._element.querySelector(`.film-details__emoji-item:checked + label`).textContent;
-      newComment.text = message.value;
+      newComment.emotion = this._getEmotion(this._element.querySelector(`.film-details__emoji-item:checked + label`).textContent);
+      newComment.comment = message.value;
       newComment.author = `me`;
-      newComment.date = moment().format(`Do MMMM YY`);
+      newComment.date = moment().format(`DD MMMM YYYY`);
 
       this._comments.push(newComment);
       message.value = ``;
@@ -90,12 +112,17 @@ class Popup extends Component {
 
   get getComments() {
     let commentsHTML = ``;
+    const emotions = {
+      'sleeping': `😴`,
+      'neutral-face': `😐`,
+      'grinning': `😀`
+    };
     this._comments.forEach(function (comment) {
       const commentTemplate = `
       <li class="film-details__comment">
-        <span class="film-details__comment-emoji">${comment.emoji}</span>
+        <span class="film-details__comment-emoji">${emotions[comment.emotion]}</span>
         <div>
-          <p class="film-details__comment-text">${comment.text}</p>
+          <p class="film-details__comment-text">${comment.comment}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${comment.author}</span>
             <span class="film-details__comment-day">${moment(comment.date).format(`DD MMMM YYYY`)}</span>
@@ -127,6 +154,11 @@ class Popup extends Component {
     this._onClick = fn;
   }
 
+  blockComments() {
+    this._element.querySelector(`.film-details__add-emoji`).disabled = true;
+    this._element.querySelector(`.film-details__comment-input`).disabled = true;
+  }
+
   get template() {
     return `
     <section class="film-details">
@@ -136,16 +168,16 @@ class Popup extends Component {
       </div>
       <div class="film-details__info-wrap">
         <div class="film-details__poster">
-          <img class="film-details__poster-img" src="images/posters/${this._picture}" alt="${this._title}">
+          <img class="film-details__poster-img" src="${this._poster}" alt="${this._title}">
 
-          <p class="film-details__age">18+</p>
+          <p class="film-details__age">${this._ageRating}+</p>
         </div>
 
         <div class="film-details__info">
           <div class="film-details__info-head">
             <div class="film-details__title-wrap">
               <h3 class="film-details__title">${this._title}</h3>
-              <p class="film-details__title-original">${this._promoLine}</p>
+              <p class="film-details__title-original">${this._alternativeTitle}</p>
             </div>
 
             <div class="film-details__rating">
@@ -161,7 +193,7 @@ class Popup extends Component {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Writers</td>
-              <td class="film-details__cell">${this._writer}</td>
+              <td class="film-details__cell">${this._writers}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Actors</td>
@@ -173,7 +205,7 @@ class Popup extends Component {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${moment.duration(this._time).asMinutes()}m</td>
+              <td class="film-details__cell">${this._runtime}m</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
@@ -241,7 +273,7 @@ class Popup extends Component {
 
         <div class="film-details__user-score">
           <div class="film-details__user-rating-poster">
-            <img src="images/posters/${this._picture}" alt="film-poster" class="film-details__user-rating-img">
+            <img src="${this._poster}" alt="film-poster" class="film-details__user-rating-img">
           </div>
 
           <section class="film-details__user-rating-inner">
@@ -263,7 +295,7 @@ class Popup extends Component {
   bind() {
     this._element.querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, this._onCloseClick);
-    this._element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this.__onCommentKeydown);
+    this._element.querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._onCommentKeydown);
     this._element.querySelectorAll(`.film-details__user-rating-label`).forEach((item) => {
       item.addEventListener(`click`, this._onRatingClick);
     });
@@ -272,7 +304,7 @@ class Popup extends Component {
   unbind() {
     this._element.querySelector(`.film-details__close-btn`)
       .removeEventListener(`click`, this._onCloseClick);
-    this._element.querySelector(`.film-details__comment-input`).removeEventListener(`keydown`, this.__onCommentKeydown);
+    this._element.querySelector(`.film-details__comment-input`).removeEventListener(`keydown`, this._onCommentKeydown);
     this._element.querySelectorAll(`.film-details__user-rating-label`).forEach((item) => {
       item.removeEventListener(`click`, this._onRatingClick);
     });
