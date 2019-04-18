@@ -3,22 +3,22 @@ import {getRandomIntgr} from './utils.js';
 const filtersArr = [
   {
     caption: `All`,
-    amount: getRandomIntgr(1, 10),
+    amount: ``,
     isChecked: true
   },
   {
     caption: `Watchlist`,
-    amount: getRandomIntgr(1, 10),
+    amount: ``,
     isChecked: false
   },
   {
     caption: `History`,
-    amount: getRandomIntgr(1, 10),
+    amount: ``,
     isChecked: false
   },
   {
     caption: `Favorites`,
-    amount: getRandomIntgr(1, 10),
+    amount: ``,
     isChecked: false
   }
 ];

@@ -2,8 +2,27 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from 'moment';
 
-const main = document.querySelector(`.main`);
 const BAR_HEIGHT = 50;
+
+const getFilteredCards = function (cards, period) {
+  switch (period) {
+    case `all-time`:
+      return cards;
+
+    case `today`:
+      return cards.filter((item) => moment(item.watchingDate) === moment().subtract(1, `days`));
+
+    case `week`:
+      return cards.filter((item) => moment(item.watchingDate) > moment().subtract(7, `days`));
+
+    case `month`:
+      return cards.filter((item) => moment(item.watchingDate) > moment().subtract(1, `months`));
+
+    case `year`:
+      return cards.filter((item) => moment(item.watchingDate) > moment().subtract(1, `years`));
+  }
+  return null;
+};
 
 const renderChart = function (cards) {
   const watchedMovies = cards.filter(function (card) {
@@ -37,32 +56,10 @@ const renderChart = function (cards) {
   const topGenre = topSorted[0];
 
   const getStatsTemplate = function () {
-    return `<section class="statistic">
-      <p class="statistic__rank">Your rank <span class="statistic__rank-label">Sci-Fighter</span></p>
-
-      <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters visually-hidden">
-        <p class="statistic__filters-description">Show stats:</p>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
-        <label for="statistic-all-time" class="statistic__filters-label">All time</label>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
-        <label for="statistic-today" class="statistic__filters-label">Today</label>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
-        <label for="statistic-week" class="statistic__filters-label">Week</label>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
-        <label for="statistic-month" class="statistic__filters-label">Month</label>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
-        <label for="statistic-year" class="statistic__filters-label">Year</label>
-      </form>
-
-      <ul class="statistic__text-list">
+    return `
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">You watched</h4>
-          <p class="statistic__item-text">${watchedMovies.length} <span class="statistic__item-description">movies</span></p>
+          <p class="statistic__item-text">${watchedMovies.length}<span class="statistic__item-description">movies</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
@@ -72,17 +69,18 @@ const renderChart = function (cards) {
           <h4 class="statistic__item-title">Top genre</h4>
           <p class="statistic__item-text">${topGenre}</p>
         </li>
-      </ul>
+    `.trim();
+  };
 
-      <div class="statistic__chart-wrap">
+  const getChartTemplate = function () {
+    return `
         <canvas class="statistic__chart" width="1000"></canvas>
-      </div>
-
-    </section>`.trim();
+    `.trim();
   };
 
 
-  main.insertAdjacentHTML(`beforeend`, getStatsTemplate());
+  document.querySelector(`.statistic__text-list`).innerHTML = getStatsTemplate();
+  document.querySelector(`.statistic__chart-wrap`).innerHTML = getChartTemplate();
 
   const chartLabels = sortedGenres.map((elem) => elem[0]);
   const chartData = sortedGenres.map((elem) => elem[1]);
@@ -149,4 +147,28 @@ const renderChart = function (cards) {
   return myChart;
 };
 
-export {renderChart};
+const onPeriodClick = function (evt, cards) {
+  const period = evt.target.value;
+  const filteredCards = getFilteredCards(cards, period);
+  renderChart(filteredCards);
+};
+
+// const switchPeriods = function (evt, cards) {
+//   switch (evt.target.id) {
+//     case `statistic-all-time`:
+//       return cards;
+//     case `statistic-today`:
+//       return cards.filter((item) => moment(item.watchingDate) === moment().subtract(1, `days`));
+//     case `statistic-week`:
+//       return cards.filter((item) => moment(item.watchingDate) > moment().subtract(7, `days`));
+//     case `statistic-month`:
+//       return cards.filter((item) => moment(item.watchingDate) > moment().subtract(1, `months`));
+//     case `statistic-year`:
+//       return cards.filter((item) => moment(item.watchingDate) > moment().subtract(1, `years`));
+//     default:
+//       return cards;
+//   }
+// };
+
+
+export {renderChart, onPeriodClick};

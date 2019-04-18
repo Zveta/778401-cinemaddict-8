@@ -8,12 +8,12 @@ class ModelCard {
     this.rating = data.film_info[`total_rating`];
     this.runtime = data.film_info[`runtime`];
     this.director = data.film_info[`director`];
-    this.writers = this._toString(data.film_info[`writers`]);
-    this.actors = this._toString(data.film_info[`actors`]);
+    this.writers = this._toString(data.film_info[`writers`] || []);
+    this.actors = this._toString(data.film_info[`actors`] || []);
     this.releaseDate = data.film_info.release[`date`];
     this.country = data.film_info.release[`release_country`];
     this.ageRating = data.film_info[`age_rating`];
-    this.genre = this._toString(data.film_info[`genre`]);
+    this.genre = this._toString(data.film_info[`genre`] || []);
     this.comments = data.comments;
     this.author = data.comments[`author`];
     this.emotion = data.comments[`emotion`];
@@ -23,6 +23,7 @@ class ModelCard {
     this.isWatchlist = data.user_details[`watchlist`];
     this.isFavorite = data.user_details[`favorite`];
     this.personalRating = data.user_details[`personal_rating`];
+    this.watchingDate = data.user_details[`watching_date`] || ``;
   }
 
   toRAW() {
@@ -49,7 +50,8 @@ class ModelCard {
         'already_watched': this.isWatched,
         'favorite': this.isFavorite,
         'personal_rating': this.personalRating,
-        'watchlist': this.isWatchlist
+        'watchlist': this.isWatchlist,
+        'watching_date': this.watchingDate
       },
       'comments': {
         'author': this.author,

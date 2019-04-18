@@ -47,7 +47,7 @@ const API = class {
   }
 
   shake() {
-    const ANIMATION_TIMEOUT = 600;
+    const ANIMATION_TIMEOUT = 300;
     this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
 
     setTimeout(() => {
