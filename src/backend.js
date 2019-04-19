@@ -30,10 +30,6 @@ const API = class {
     return this._load({url: `movies`})
     .then(toJSON)
     .then(ModelCard.parseCards);
-    // .then((resolve) => {
-    //   console.log(resolve);
-    //   ModelCard.parseCards(resolve);
-    // });
   }
 
   updateCard({id, data}) {

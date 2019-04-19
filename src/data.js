@@ -1,5 +1,3 @@
-import {getRandomIntgr} from './utils.js';
-
 const filtersArr = [
   {
     caption: `All`,

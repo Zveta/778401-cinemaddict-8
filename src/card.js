@@ -20,7 +20,6 @@ class Card extends Component {
     this._isFavorite = data.isFavorite;
     this._watchingDate = data.watchingDate;
 
-    this._isMainCard = true;
     this._onAddToWatchList = null;
     this._onMarkAsWatched = null;
     this._onMarkAsFavorite = null;

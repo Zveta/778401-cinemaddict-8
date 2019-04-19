@@ -4,26 +4,6 @@ import moment from 'moment';
 
 const BAR_HEIGHT = 50;
 
-const getFilteredCards = function (cards, period) {
-  switch (period) {
-    case `all-time`:
-      return cards;
-
-    case `today`:
-      return cards.filter((item) => moment(item.watchingDate) === moment().subtract(1, `days`));
-
-    case `week`:
-      return cards.filter((item) => moment(item.watchingDate) > moment().subtract(7, `days`));
-
-    case `month`:
-      return cards.filter((item) => moment(item.watchingDate) > moment().subtract(1, `months`));
-
-    case `year`:
-      return cards.filter((item) => moment(item.watchingDate) > moment().subtract(1, `years`));
-  }
-  return null;
-};
-
 const renderChart = function (cards) {
   const watchedMovies = cards.filter(function (card) {
     return card.isWatched === true;
@@ -31,7 +11,24 @@ const renderChart = function (cards) {
 
   const totalDuration = watchedMovies.reduce((sum, elem) => sum + elem.runtime, 0);
 
-  const watchedGenres = watchedMovies.map((elem) => elem.genre);
+  const watchedGenres = watchedMovies.map(function (elem) {
+    return elem.genre;
+  });
+
+  const getGenres = function (arr) {
+    let newArr = [];
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].split(`, `).length > 1 && arr[i] !== ``) {
+        let splitString = arr[i].split(`, `);
+        for (let j = 0; j < splitString.length; j++) {
+          newArr.push(splitString[j]);
+        }
+      } else if (arr[i].split(`, `).length === 1 && arr[i] !== ``) {
+        newArr.push(arr[i]);
+      }
+    }
+    return newArr;
+  };
 
   const findRepeatedGenres = function (data) {
     const result = {};
@@ -46,14 +43,14 @@ const renderChart = function (cards) {
     return result;
   };
 
-  const repeatedGenres = Object.entries(findRepeatedGenres(watchedGenres));
+  const repeatedGenres = Object.entries(findRepeatedGenres(getGenres(watchedGenres)));
 
   const sortedGenres = repeatedGenres.sort(function (a, b) {
-    return b.value - a.value;
+    return b[1] - a[1];
   });
 
   const topSorted = sortedGenres.map((item) => item[0]);
-  const topGenre = topSorted[0];
+  const topGenre = topSorted[0] !== undefined ? topSorted[0] : `no data`;
 
   const getStatsTemplate = function () {
     return `
@@ -143,32 +140,7 @@ const renderChart = function (cards) {
       }
     }
   });
-
   return myChart;
 };
 
-const onPeriodClick = function (evt, cards) {
-  const period = evt.target.value;
-  const filteredCards = getFilteredCards(cards, period);
-  renderChart(filteredCards);
-};
-
-// const switchPeriods = function (evt, cards) {
-//   switch (evt.target.id) {
-//     case `statistic-all-time`:
-//       return cards;
-//     case `statistic-today`:
-//       return cards.filter((item) => moment(item.watchingDate) === moment().subtract(1, `days`));
-//     case `statistic-week`:
-//       return cards.filter((item) => moment(item.watchingDate) > moment().subtract(7, `days`));
-//     case `statistic-month`:
-//       return cards.filter((item) => moment(item.watchingDate) > moment().subtract(1, `months`));
-//     case `statistic-year`:
-//       return cards.filter((item) => moment(item.watchingDate) > moment().subtract(1, `years`));
-//     default:
-//       return cards;
-//   }
-// };
-
-
-export {renderChart, onPeriodClick};
+export {renderChart};

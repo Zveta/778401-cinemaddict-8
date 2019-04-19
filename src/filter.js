@@ -5,8 +5,6 @@ class Filter extends Component {
     super();
     this._caption = data.caption;
     this._amount = null;
-    this._isChecked = data.isChecked;
-    this._element = null;
     this._onFilter = null;
     this._onFilterButtonClick = this._onFilterButtonClick.bind(this);
   }
@@ -32,7 +30,7 @@ class Filter extends Component {
 
   get template() {
     return `
-      <a href="#${this._caption.toLowerCase()}" class="main-navigation__item filter ${this._isChecked ? `main-navigation__item--active` : ``}">
+      <a href="#${this._caption.toLowerCase()}" class="main-navigation__item filter ${this._caption === `All` ? `main-navigation__item--active` : ``}">
       ${this._caption}
       ${this._caption !== `All` ? `<span class="main-navigation__item-count">${this.amount}</span>` : `<span class="main-navigation__item-count visually-hidden"></span>`}
       </a>`.trim();

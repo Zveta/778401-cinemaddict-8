@@ -20,12 +20,6 @@ class Popup extends Component {
     this._comments = data.comments;
     this._ageRating = data.ageRating;
     this._userRating = data.userRating;
-    //this._commentsCount = data.commentsCount;
-    // this._emotions = {
-    //   'sleeping': `😴`,
-    //   'neutral-face': `😐`,
-    //   'grinning': `😀`
-    // };
 
     this._onPopupClose = null;
     this._onPopupEsc = null;
@@ -470,14 +464,14 @@ class Popup extends Component {
     this._element.querySelector(`.film-details__comments-wrap`).classList.add(`shake`);
   }
 
-  // shake() {
-  //   const ANIMATION_TIMEOUT = 300;
-  //   this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
+  shake() {
+    const ANIMATION_TIMEOUT = 300;
+    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
 
-  //   setTimeout(() => {
-  //     this._element.style.animation = ``;
-  //   }, ANIMATION_TIMEOUT);
-  // }
+    setTimeout(() => {
+      this._element.style.animation = ``;
+    }, ANIMATION_TIMEOUT);
+  }
 }
 
 export {Popup};

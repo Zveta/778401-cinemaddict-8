@@ -119,7 +119,7 @@ const renderCards = (cards, node) => {
         popupComponent.unblockComments();
       })
       .catch(() => {
-        // popupComponent.shake();
+        popupComponent.shake();
         popupComponent.shakeComment();
         popupComponent.unblockComments();
       });
@@ -172,13 +172,16 @@ const renderFilters = function (filters, initialCards) {
     filtersNode.insertBefore(filterComponent.element, statsBtn);
     filterComponent.onFilter = () => {
       cardsNode.innerHTML = ``;
+      if (showMoreBtn.classList.contains(`visually-hidden`)) {
+        showMoreBtn.classList.remove(`visually-hidden`);
+      }
+      document.querySelectorAll(`.main-navigation__item`).forEach((item) => item.classList.remove(`main-navigation__item--active`));
+      filterComponent.element.classList.add(`main-navigation__item--active`);
+      filterComponent.element.querySelector(`.main-navigation__item-count`).innerHTML = filterCards(initialCards, filter.caption.toLowerCase()).length;
       renderBySets(filterCards(initialCards, filter.caption.toLowerCase()));
       if (filmsSection.classList.contains(`visually-hidden`) && statsSection !== null) {
         filmsSection.classList.remove(`visually-hidden`);
         statsSection.classList.add(`visually-hidden`);
-      }
-      if (showMoreBtn.classList.contains(`visually-hidden`)) {
-        showMoreBtn.classList.remove(`visually-hidden`);
       }
     };
   }
@@ -214,18 +217,23 @@ const renderSearch = function (cards) {
 };
 
 const renderBySets = function (cards) {
-  const copiedArr = cards.concat();
+  let copiedArr = [];
+  copiedArr = cards.concat();
   renderCards(copiedArr.splice(0, CARDS_SET), cardsNode);
   const onShowMoreClick = function () {
     if (copiedArr.length > CARDS_SET) {
-      const slicedArr = copiedArr.splice(0, CARDS_SET);
-      renderCards(slicedArr, cardsNode);
+      renderCards(copiedArr.splice(0, CARDS_SET), cardsNode);
     } else if (copiedArr.length <= CARDS_SET) {
-      renderCards(copiedArr, cardsNode);
+      renderCards(copiedArr.splice(0, CARDS_SET), cardsNode);
       showMoreBtn.classList.add(`visually-hidden`);
       showMoreBtn.removeEventListener(`click`, onShowMoreClick);
     }
   };
+  if (copiedArr <= CARDS_SET) {
+    renderCards(copiedArr, cardsNode);
+    showMoreBtn.classList.add(`visually-hidden`);
+    showMoreBtn.removeEventListener(`click`, onShowMoreClick);
+  }
   showMoreBtn.addEventListener(`click`, onShowMoreClick);
 };
 
@@ -245,16 +253,7 @@ api.getCards()
     evt.preventDefault();
     filmsSection.classList.add(`visually-hidden`);
     statsSection.classList.remove(`visually-hidden`);
-    renderChart(initialCards, cardsNode);
-    // getChart(initialCards);
-    // const periodBtns = document.querySelectorAll(`.statistic__filters-input`);
-    // periodBtns.forEach(function (periodBtn) {
-    //   periodBtn.addEventListener(`click`, function (e) {
-    //     const filteredCards = switchPeriods(e, cards);
-    //     console.log(filteredCards);
-    //     getChart(filteredCards);
-    //   });
-    // });
+    renderChart(initialCards);
   };
   const dayPeriod = document.getElementById(`statistic-today`);
   dayPeriod.addEventListener(`change`, function () {
