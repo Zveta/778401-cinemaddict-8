@@ -13,12 +13,8 @@
 
 <header class="header">
   <h1 class="header__logo logo">Moowle</h1>
-  <form class="header__search search">
-    <input type="text" name="search" class="search__field" placeholder="Search">
-    <button type="submit" class="visually-hidden">Search</button>
-  </form>
   <section class="header__profile profile">
-    <p class="profile__rating">Show adept</p>
+    <p class="profile__rating"></p>
   </section>
 </header>
 
@@ -30,7 +26,8 @@
   <section class="films">
     <section class="films-list">
       <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
-
+      <p class="films-list__load">Loading moovies…</p>
+      <p class="films-list__load-error visually-hidden">Something went wrong while loading movies. Check your connection or try again later.</p>
       <div class="films-list__container">
       </div>
 
@@ -39,7 +36,6 @@
 
     <section class="films-list--extra">
       <h2 class="films-list__title">Top rated</h2>
-
       <div class="films-list__container top-rated">
       </div>
     </section>
@@ -50,13 +46,35 @@
       </div>
     </section>
   </section>
-</main>
+  <section class="statistic visually-hidden">
+    <p class="statistic__rank">Your rank <span class="statistic__rank-label">Sci-Fighter</span></p>
+    <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
+      <p class="statistic__filters-description">Show stats:</p>
 
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
+      <label for="statistic-all-time" class="statistic__filters-label">All time</label>
+
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
+      <label for="statistic-today" class="statistic__filters-label">Today</label>
+
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
+      <label for="statistic-week" class="statistic__filters-label">Week</label>
+
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
+      <label for="statistic-month" class="statistic__filters-label">Month</label>
+
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
+      <label for="statistic-year" class="statistic__filters-label">Year</label>
+    </form>
+    <ul class="statistic__text-list"></ul>
+    <div class="statistic__chart-wrap">
+    </div>
+  </section>
+</main>
 
 <footer class="footer">
   <section class="footer__logo logo logo--smaller">Moowle</section>
   <section class="footer__statistics">
-    <p>130&thinsp;291 movies inside</p>
   </section>
 </footer>
 

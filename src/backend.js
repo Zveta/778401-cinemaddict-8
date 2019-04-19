@@ -30,10 +30,6 @@ const API = class {
     return this._load({url: `movies`})
     .then(toJSON)
     .then(ModelCard.parseCards);
-    // .then((resolve) => {
-    //   console.log(resolve);
-    //   ModelCard.parseCards(resolve);
-    // });
   }
 
   updateCard({id, data}) {
@@ -47,7 +43,7 @@ const API = class {
   }
 
   shake() {
-    const ANIMATION_TIMEOUT = 600;
+    const ANIMATION_TIMEOUT = 300;
     this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
 
     setTimeout(() => {

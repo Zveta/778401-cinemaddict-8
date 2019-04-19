@@ -2,7 +2,6 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from 'moment';
 
-const main = document.querySelector(`.main`);
 const BAR_HEIGHT = 50;
 
 const renderChart = function (cards) {
@@ -12,7 +11,24 @@ const renderChart = function (cards) {
 
   const totalDuration = watchedMovies.reduce((sum, elem) => sum + elem.runtime, 0);
 
-  const watchedGenres = watchedMovies.map((elem) => elem.genre);
+  const watchedGenres = watchedMovies.map(function (elem) {
+    return elem.genre;
+  });
+
+  const getGenres = function (arr) {
+    let newArr = [];
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].split(`, `).length > 1 && arr[i] !== ``) {
+        let splitString = arr[i].split(`, `);
+        for (let j = 0; j < splitString.length; j++) {
+          newArr.push(splitString[j]);
+        }
+      } else if (arr[i].split(`, `).length === 1 && arr[i] !== ``) {
+        newArr.push(arr[i]);
+      }
+    }
+    return newArr;
+  };
 
   const findRepeatedGenres = function (data) {
     const result = {};
@@ -27,42 +43,20 @@ const renderChart = function (cards) {
     return result;
   };
 
-  const repeatedGenres = Object.entries(findRepeatedGenres(watchedGenres));
+  const repeatedGenres = Object.entries(findRepeatedGenres(getGenres(watchedGenres)));
 
   const sortedGenres = repeatedGenres.sort(function (a, b) {
-    return b.value - a.value;
+    return b[1] - a[1];
   });
 
   const topSorted = sortedGenres.map((item) => item[0]);
-  const topGenre = topSorted[0];
+  const topGenre = topSorted[0] !== undefined ? topSorted[0] : `no data`;
 
   const getStatsTemplate = function () {
-    return `<section class="statistic">
-      <p class="statistic__rank">Your rank <span class="statistic__rank-label">Sci-Fighter</span></p>
-
-      <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters visually-hidden">
-        <p class="statistic__filters-description">Show stats:</p>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
-        <label for="statistic-all-time" class="statistic__filters-label">All time</label>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
-        <label for="statistic-today" class="statistic__filters-label">Today</label>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
-        <label for="statistic-week" class="statistic__filters-label">Week</label>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
-        <label for="statistic-month" class="statistic__filters-label">Month</label>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
-        <label for="statistic-year" class="statistic__filters-label">Year</label>
-      </form>
-
-      <ul class="statistic__text-list">
+    return `
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">You watched</h4>
-          <p class="statistic__item-text">${watchedMovies.length} <span class="statistic__item-description">movies</span></p>
+          <p class="statistic__item-text">${watchedMovies.length}<span class="statistic__item-description">movies</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
@@ -72,17 +66,18 @@ const renderChart = function (cards) {
           <h4 class="statistic__item-title">Top genre</h4>
           <p class="statistic__item-text">${topGenre}</p>
         </li>
-      </ul>
+    `.trim();
+  };
 
-      <div class="statistic__chart-wrap">
+  const getChartTemplate = function () {
+    return `
         <canvas class="statistic__chart" width="1000"></canvas>
-      </div>
-
-    </section>`.trim();
+    `.trim();
   };
 
 
-  main.insertAdjacentHTML(`beforeend`, getStatsTemplate());
+  document.querySelector(`.statistic__text-list`).innerHTML = getStatsTemplate();
+  document.querySelector(`.statistic__chart-wrap`).innerHTML = getChartTemplate();
 
   const chartLabels = sortedGenres.map((elem) => elem[0]);
   const chartData = sortedGenres.map((elem) => elem[1]);
@@ -145,7 +140,6 @@ const renderChart = function (cards) {
       }
     }
   });
-
   return myChart;
 };
 
