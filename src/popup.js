@@ -56,10 +56,6 @@ class Popup extends Component {
     this._onCommentUndo = fn;
   }
 
-  // set onAddRating(fn) {
-  //   this._onAddRating = fn;
-  // }
-
   set onAddToWatchList(fn) {
     this._onAddToWatchList = fn;
   }
