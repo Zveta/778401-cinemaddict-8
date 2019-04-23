@@ -39,7 +39,18 @@ export default class API {
       body: JSON.stringify(data),
       headers: new Headers({'Content-Type': `application/json`})
     })
-      .then(toJSON);
+      .then(toJSON)
+      .then(ModelCard.parseCard);
+  }
+
+  syncCards({cards}) {
+    return this._load({
+      url: `movies/sync`,
+      method: Method.POST,
+      body: JSON.stringify(cards),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+    .then(toJSON);
   }
 
   shake() {

@@ -97,7 +97,7 @@ export default class Popup extends Component {
       newComment.date = moment().format(`DD MMMM YYYY`);
 
       this._comments.push(newComment);
-      this._ratingControls.classList.remove(`visually-hidden`);
+      this._commentControls.classList.remove(`visually-hidden`);
       this._statusSpan.innerHTML = `Comment added`;
       if (typeof this._onAddComment === `function`) {
         this._onAddComment(this._comments);
@@ -106,8 +106,8 @@ export default class Popup extends Component {
   }
 
   updateComments() {
-    this._commentsList.innerHTML = this._getComments();
-    this._commentsCount.textContent = this._comments.length;
+    this._element.querySelector(`.film-details__comments-list`).innerHTML = this._getComments();
+    this._element.querySelector(`.film-details__comments-count`).textContent = this._comments.length;
   }
 
   _onCommentUndoClick() {
@@ -419,8 +419,6 @@ export default class Popup extends Component {
     this._ratingControls = this._element.querySelectorAll(`.film-details__user-rating-label`);
     this._emojiBtn = this._element.querySelector(`.film-details__add-emoji`);
     this._statusSpan = this._element.querySelector(`.film-details__watched-status`);
-    this._commentsList = this._element.querySelector(`.film-details__comments-list`);
-    this._commentsCount = this._element.querySelector(`.film-details__comments-count`);
     this._commentsWrap = this._element.querySelector(`.film-details__comments-wrap`);
     this._form = this._element.querySelector(`.film-details__inner`);
 

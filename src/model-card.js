@@ -8,13 +8,13 @@ export default class ModelCard {
     this.rating = data.film_info[`total_rating`];
     this.runtime = data.film_info[`runtime`];
     this.director = data.film_info[`director`];
-    this.writers = this._toString(data.film_info[`writers`] || []);
-    this.actors = this._toString(data.film_info[`actors`] || []);
+    this.writers = data.film_info[`writers`] || [];
+    this.actors = data.film_info[`actors`] || [];
     this.releaseDate = data.film_info.release[`date`];
     this.country = data.film_info.release[`release_country`];
     this.ageRating = data.film_info[`age_rating`];
-    this.genre = this._toString(data.film_info[`genre`] || []);
-    this.comments = data.comments;
+    this.genre = data.film_info[`genre`] || [];
+    this.comments = this._toArr(data.comments);
     this.author = data.comments[`author`];
     this.emotion = data.comments[`emotion`];
     this.comment = data.comments[`comment`];
@@ -73,8 +73,13 @@ export default class ModelCard {
     return arr;
   }
 
-  _toString(arr) {
-    let result = arr.join(`, `);
+  _toArr(data) {
+    let result = [];
+    if (data.length > 0) {
+      result = data;
+    } else {
+      result = [];
+    }
     return result;
   }
 }

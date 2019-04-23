@@ -5,13 +5,18 @@ import Filter from './filter.js';
 import Search from './search.js';
 import {renderChart} from './stats.js';
 import API from './backend.js';
+import Provider from './provider.js';
+import Store from './store.js';
 import {getMostCommented, getTopRated} from './extra-cards.js';
 import moment from 'moment';
 
 const CARDS_SET = 5;
-const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
+const CARDS_STORE_KEY = `cards-store-key`;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
+const store = new Store({key: CARDS_STORE_KEY, storage: localStorage});
+const provider = new Provider({api, store, generateId: () => String(Date.now())});
 
 const body = document.querySelector(`body`);
 const cardsNode = document.querySelector(`.films-list__container`);
@@ -65,7 +70,7 @@ const renderCards = (cards, node) => {
 
     cardComponent.onAddToWatchList = () => {
       card.isWatchlist = !card.isWatchlist;
-      api.updateCard({id: card.id, data: card.toRAW()})
+      provider.updateCard({id: card.id, data: card.toRAW()})
       .then((newCard) => {
         cardComponent.update(newCard);
       });
@@ -73,7 +78,7 @@ const renderCards = (cards, node) => {
 
     cardComponent.onMarkAsWatched = () => {
       card.isWatched = !card.isWatched;
-      api.updateCard({id: card.id, data: card.toRAW()})
+      provider.updateCard({id: card.id, data: card.toRAW()})
       .then((newCard) => {
         cardComponent.update(newCard);
       });
@@ -81,14 +86,14 @@ const renderCards = (cards, node) => {
 
     cardComponent.onMarkAsFavorite = () => {
       card.isFavorite = !card.isFavorite;
-      api.updateCard({id: card.id, data: card.toRAW()})
+      provider.updateCard({id: card.id, data: card.toRAW()})
       .then((newCard) => {
         cardComponent.update(newCard);
       });
     };
 
     popupComponent.onClose = () => {
-      api.updateCard({id: card.id, data: card.toRAW()})
+      provider.updateCard({id: card.id, data: card.toRAW()})
       .then((newData) => {
         cardComponent.update(newData);
         cardComponent.render();
@@ -101,7 +106,7 @@ const renderCards = (cards, node) => {
     };
 
     popupComponent.onEsc = () => {
-      api.updateCard({id: card.id, data: card.toRAW()})
+      provider.updateCard({id: card.id, data: card.toRAW()})
       .then(() => {
         cardComponent.update(card);
         cardComponent.render();
@@ -116,7 +121,7 @@ const renderCards = (cards, node) => {
     popupComponent.onAddComment = (newData) => {
       card.comments = newData;
       popupComponent.blockComments();
-      api.updateCard({id: card.id, data: card.toRAW()})
+      provider.updateCard({id: card.id, data: card.toRAW()})
       .then(() => {
         popupComponent.update(card);
         cardComponent.update(card);
@@ -131,7 +136,7 @@ const renderCards = (cards, node) => {
 
     popupComponent.onAddToWatchList = () => {
       card.isWatchlist = !card.isWatchlist;
-      api.updateCard({id: card.id, data: card.toRAW()})
+      provider.updateCard({id: card.id, data: card.toRAW()})
       .then(() => {
         cardComponent.update(card);
         popupComponent.update(card);
@@ -140,7 +145,7 @@ const renderCards = (cards, node) => {
 
     popupComponent.onMarkAsWatched = () => {
       card.isWatched = !card.isWatched;
-      api.updateCard({id: card.id, data: card.toRAW()})
+      provider.updateCard({id: card.id, data: card.toRAW()})
       .then(() => {
         cardComponent.update(card);
         popupComponent.update(card);
@@ -149,7 +154,7 @@ const renderCards = (cards, node) => {
 
     popupComponent.onMarkAsFavorite = () => {
       card.isFavorite = !card.isFavorite;
-      api.updateCard({id: card.id, data: card.toRAW()})
+      provider.updateCard({id: card.id, data: card.toRAW()})
       .then(() => {
         cardComponent.update(card);
         popupComponent.update(card);
@@ -244,7 +249,7 @@ const renderBySets = (cards) => {
   showMoreBtn.addEventListener(`click`, onShowMoreClick);
 };
 
-api.getCards()
+provider.getCards()
 .then((cards) => {
   const initialCards = cards;
   loadMessage.remove();
@@ -271,4 +276,12 @@ api.getCards()
 }).catch(() => {
   loadMessage.remove();
   loadErrorMessage.classList.remove(`visually-hidden`);
+});
+
+window.addEventListener(`offline`, () => {
+  document.title = `${document.title}[OFFLINE]`;
+});
+window.addEventListener(`online`, () => {
+  document.title = document.title.split(`[OFFLINE]`)[0];
+  provider.syncCards();
 });
