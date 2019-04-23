@@ -1,4 +1,4 @@
-import {ModelCard} from "./model-card.js";
+import ModelCard from "./model-card.js";
 
 const Method = {
   GET: `GET`,
@@ -20,7 +20,7 @@ const toJSON = (response) => {
 };
 
 
-const API = class {
+export default class API {
   constructor({endPoint, authorization}) {
     this._endPoint = endPoint;
     this._authorization = authorization;
@@ -60,6 +60,4 @@ const API = class {
         throw err;
       });
   }
-};
-
-export {API};
+}

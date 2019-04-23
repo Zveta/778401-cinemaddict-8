@@ -3,19 +3,17 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from 'moment';
 
 const BAR_HEIGHT = 50;
+const statsText = document.querySelector(`.statistic__text-list`);
+const statsChart = document.querySelector(`.statistic__chart-wrap`);
 
-const renderChart = function (cards) {
-  const watchedMovies = cards.filter(function (card) {
-    return card.isWatched === true;
-  });
+const renderChart = (cards) => {
+  const watchedMovies = cards.filter((card) => card.isWatched === true);
 
   const totalDuration = watchedMovies.reduce((sum, elem) => sum + elem.runtime, 0);
 
-  const watchedGenres = watchedMovies.map(function (elem) {
-    return elem.genre;
-  });
+  const watchedGenres = watchedMovies.map((elem) => elem.genre);
 
-  const getGenres = function (arr) {
+  const getGenres = (arr) => {
     let newArr = [];
     for (let i = 0; i < arr.length; i++) {
       if (arr[i].split(`, `).length > 1 && arr[i] !== ``) {
@@ -30,7 +28,7 @@ const renderChart = function (cards) {
     return newArr;
   };
 
-  const findRepeatedGenres = function (data) {
+  const findRepeatedGenres = (data) => {
     const result = {};
     for (let i = 0; i < data.length; i++) {
       let count = result[data[i]];
@@ -45,14 +43,12 @@ const renderChart = function (cards) {
 
   const repeatedGenres = Object.entries(findRepeatedGenres(getGenres(watchedGenres)));
 
-  const sortedGenres = repeatedGenres.sort(function (a, b) {
-    return b[1] - a[1];
-  });
+  const sortedGenres = repeatedGenres.sort((a, b) => b[1] - a[1]);
 
   const topSorted = sortedGenres.map((item) => item[0]);
   const topGenre = topSorted[0] !== undefined ? topSorted[0] : `no data`;
 
-  const getStatsTemplate = function () {
+  const getStatsTemplate = () => {
     return `
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">You watched</h4>
@@ -69,15 +65,15 @@ const renderChart = function (cards) {
     `.trim();
   };
 
-  const getChartTemplate = function () {
+  const getChartTemplate = () => {
     return `
         <canvas class="statistic__chart" width="1000"></canvas>
     `.trim();
   };
 
 
-  document.querySelector(`.statistic__text-list`).innerHTML = getStatsTemplate();
-  document.querySelector(`.statistic__chart-wrap`).innerHTML = getChartTemplate();
+  statsText.innerHTML = getStatsTemplate();
+  statsChart.innerHTML = getChartTemplate();
 
   const chartLabels = sortedGenres.map((elem) => elem[0]);
   const chartData = sortedGenres.map((elem) => elem[1]);

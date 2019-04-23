@@ -1,4 +1,4 @@
-class ModelCard {
+export default class ModelCard {
   constructor(data) {
     this.id = data[`id`];
     this.title = data.film_info[`title`];
@@ -78,5 +78,3 @@ class ModelCard {
     return result;
   }
 }
-
-export {ModelCard};

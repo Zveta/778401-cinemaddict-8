@@ -1,8 +1,8 @@
-import {Component} from './component.js';
+import Component from './component.js';
 import moment from 'moment';
 const MAX_LENGTH = 140;
 
-class Card extends Component {
+export default class Card extends Component {
   constructor(data) {
     super();
     this._id = data.id;
@@ -37,7 +37,7 @@ class Card extends Component {
   _onAddToWatchListClick(evt) {
     evt.preventDefault();
     this._isWatchlist = !this._isWatchlist;
-    const formData = new FormData(this._element.querySelector(`.film-card__controls`));
+    const formData = new FormData(this._controls);
     const newData = this._processForm(formData);
     if (typeof this._onAddToWatchList === `function`) {
       this._onAddToWatchList(newData);
@@ -48,7 +48,7 @@ class Card extends Component {
   _onMarkAsWatchedClick(evt) {
     evt.preventDefault();
     this._isWatched = !this._isWatched;
-    const formData = new FormData(this._element.querySelector(`.film-card__controls`));
+    const formData = new FormData(this._controls);
     const newData = this._processForm(formData);
     if (typeof this._onMarkAsWatched === `function`) {
       this._onMarkAsWatched(newData);
@@ -59,7 +59,7 @@ class Card extends Component {
   _onMarkAsFavoriteClick(evt) {
     evt.preventDefault();
     this._isFavorite = !this._isFavorite;
-    const formData = new FormData(this._element.querySelector(`.film-card__controls`));
+    const formData = new FormData(this._controls);
     const newData = this._processForm(formData);
     if (typeof this._onMarkAsFavorite === `function`) {
       this._onMarkAsFavorite(newData);
@@ -106,12 +106,13 @@ class Card extends Component {
     return {
       comments: (value) => (target.comments = value),
       isWatchlist: (value) => (target.isWatchlist = value),
-      isWatched: (value) => (target.isWatched = value)
+      isWatched: (value) => (target.isWatched = value),
+      isFavorite: (value) => (target.isFavorite = value)
     };
   }
 
   _updateCommentsCount() {
-    this._element.querySelector(`.film-card__comments`).innerHTML = this._updateComments();
+    this._commentsLink.innerHTML = this._updateComments();
   }
 
   _updateComments() {
@@ -152,25 +153,22 @@ class Card extends Component {
   }
 
   bind() {
-    this._element.querySelector(`.film-card__comments`)
-        .addEventListener(`click`, this._onCommentsLinkClick.bind(this));
-    this._element.querySelector(`.film-card__controls-item--mark-as-watched`)
-        .addEventListener(`click`, this._onMarkAsWatchedClick);
-    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`)
-        .addEventListener(`click`, this._onAddToWatchListClick);
-    this._element.querySelector(`.film-card__controls-item--favorite`)
-        .addEventListener(`click`, this._onMarkAsFavoriteClick);
+    this._controls = this._element.querySelector(`.film-card__controls`);
+    this._commentsLink = this._element.querySelector(`.film-card__comments`);
+    this._watchedBtn = this._element.querySelector(`.film-card__controls-item--mark-as-watched`);
+    this._watchlistBtn = this._element.querySelector(`.film-card__controls-item--add-to-watchlist`);
+    this._favoriteBtn = this._element.querySelector(`.film-card__controls-item--favorite`);
+
+    this._commentsLink.addEventListener(`click`, this._onCommentsLinkClick.bind(this));
+    this._watchedBtn.addEventListener(`click`, this._onMarkAsWatchedClick);
+    this._watchlistBtn.addEventListener(`click`, this._onAddToWatchListClick);
+    this._favoriteBtn.addEventListener(`click`, this._onMarkAsFavoriteClick);
   }
 
   unbind() {
-    this._element.querySelector(`.film-card__comments`)
-      .removeEventListener(`click`, this._onCommentsLinkClick);
-    this._element.querySelector(`.film-card__controls-item--mark-as-watched`)
-        .removeEventListener(`click`, this._onMarkAsWatchedClick);
-    this._element.querySelector(`.film-card__controls-item--add-to-watchlist`)
-        .removeEventListener(`click`, this._onAddToWatchListClick);
-    this._element.querySelector(`.film-card__controls-item--favorite`)
-        .removeEventListener(`click`, this._onMarkAsFavoriteClick);
+    this._commentsLink.removeEventListener(`click`, this._onCommentsLinkClick);
+    this._watchedBtn.removeEventListener(`click`, this._onMarkAsWatchedClick);
+    this._watchlistBtn.removeEventListener(`click`, this._onAddToWatchListClick);
+    this._favoriteBtn.removeEventListener(`click`, this._onMarkAsFavoriteClick);
   }
 }
-export {Card};

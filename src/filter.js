@@ -1,31 +1,31 @@
-import {Component} from "./component.js";
+import Component from "./component.js";
 
-class Filter extends Component {
+export default class Filter extends Component {
   constructor(data) {
     super();
     this._caption = data.caption;
     this._amount = null;
-    this._onFilter = null;
-    this._onFilterButtonClick = this._onFilterButtonClick.bind(this);
+    this._onClick = null;
+    this._oBtnClick = this._oBtnClick.bind(this);
   }
 
-  _onFilterButtonClick(evt) {
+  _oBtnClick(evt) {
     evt.preventDefault();
-    return typeof this._onFilter === `function` && this._onFilter();
+    return typeof this._onClick === `function` && this._onClick();
   }
 
-  set onFilter(fn) {
-    this._onFilter = fn;
+  set onClick(fn) {
+    this._onClick = fn;
   }
 
-  _updateFilterAmount() {
+  _updateAmount() {
     const amount = this._element.querySelector(`.main-navigation__item-count`);
     amount.textContent = this._amount;
   }
 
-  getFilterAmount(data) {
+  getAmount(data) {
     this._amount = data.length;
-    this._updateFilterAmount();
+    this._updateAmount();
   }
 
   get template() {
@@ -37,12 +37,10 @@ class Filter extends Component {
   }
 
   bind() {
-    this._element.addEventListener(`click`, this._onFilterButtonClick);
+    this._element.addEventListener(`click`, this._oBtnClick);
   }
 
   unbind() {
-    this._element.removeEventListener(`click`, this._onFilterButtonClick);
+    this._element.removeEventListener(`click`, this._oBtnClick);
   }
 }
-
-export {Filter};

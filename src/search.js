@@ -1,19 +1,19 @@
-import {Component} from './component.js';
+import Component from './component.js';
 
-class Search extends Component {
+export default class Search extends Component {
   constructor() {
     super();
-    this._onSearch = null;
-    this._onSearchChange = this._onSearchChange.bind(this);
+    this._onChange = null;
+    this._onInputChange = this._onInputChange.bind(this);
   }
 
-  set onSearch(fn) {
-    this._onSearch = fn;
+  set onChange(fn) {
+    this._onChange = fn;
   }
 
-  _onSearchChange(evt) {
-    if (typeof this._onSearch === `function`) {
-      this._onSearch(evt.target.value);
+  _onInputChange(evt) {
+    if (typeof this._onChange === `function`) {
+      this._onChange(evt.target.value);
     }
   }
 
@@ -25,12 +25,11 @@ class Search extends Component {
   }
 
   bind() {
-    this._element.querySelector(`.search__field`).addEventListener(`keyup`, this._onSearchChange);
+    this._input = this._element.querySelector(`.search__field`);
+    this._input.addEventListener(`keyup`, this._onInputChange);
   }
 
   unbind() {
-    this._element.querySelector(`.search__field`).removeEventListener(`keydown`, this._onSearchChange);
+    this._input.removeEventListener(`keydown`, this._onInputChange);
   }
 }
-
-export {Search};

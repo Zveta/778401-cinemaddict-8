@@ -1,20 +1,15 @@
-const getMostCommented = function (cards) {
+const getMostCommented = (cards) => {
   let localCards = cards.slice();
-  const sorted = localCards.sort(function (a, b) {
-    return b.comments.length - a.comments.length;
-  });
+  const sorted = localCards.sort((a, b) => b.comments.length - a.comments.length);
   const result = sorted.slice(0, 2);
   return result;
 };
 
-const getTopRated = function (cards) {
+const getTopRated = (cards) => {
   let localCards = cards.slice();
-  const sorted = localCards.sort(function (a, b) {
-    return b.rating - a.rating;
-  });
+  const sorted = localCards.sort((a, b) => b.rating - a.rating);
   const result = sorted.slice(0, 2);
   return result;
 };
 
 export {getMostCommented, getTopRated};
-

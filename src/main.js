@@ -1,13 +1,14 @@
 import {filtersArr} from './data.js';
-import {Card} from './card.js';
-import {Popup} from './popup.js';
-import {Filter} from './filter.js';
-import {Search} from './search.js';
+import Card from './card.js';
+import Popup from './popup.js';
+import Filter from './filter.js';
+import Search from './search.js';
 import {renderChart} from './stats.js';
-import {API} from './backend.js';
+import API from './backend.js';
 import {getMostCommented, getTopRated} from './extra-cards.js';
 import moment from 'moment';
 
+const CARDS_SET = 5;
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
 const END_POINT = `https://es8-demo-srv.appspot.com/moowle/`;
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
@@ -24,18 +25,22 @@ const showMoreBtn = document.querySelector(`.films-list__show-more`);
 const statsSection = document.querySelector(`.statistic `);
 const loadMessage = document.querySelector(`.films-list__load`);
 const loadErrorMessage = document.querySelector(`.films-list__load-error`);
+const dayPeriod = document.querySelector(`#statistic-today`);
+const weekPeriod = document.querySelector(`#statistic-week`);
+const monthPeriod = document.querySelector(`#statistic-month`);
+const yearPeriod = document.querySelector(`#statistic-year`);
+const allTimePeriod = document.querySelector(`#statistic-all-time`);
+const footerStats = document.querySelector(`.footer__statistics`);
+const profileRatingField = document.querySelector(`.profile__rating`);
+
 loadMessage.style.textAlign = `center`;
 loadErrorMessage.style.textAlign = `center`;
 
-
-const CARDS_SET = 5;
-
-const renderFooterStats = function (cards) {
-  const footerStats = document.querySelector(`.footer__statistics`);
+const renderFooterStats = (cards) => {
   footerStats.innerHTML = `<p>${cards.length > 1 ? `${cards.length} movies` : `${cards.length} movie`} inside</p>`;
 };
 
-const renderProfileRating = function (cards) {
+const renderProfileRating = (cards) => {
   const watchedMovies = cards.filter((item) => item.isWatched === true);
   let profileRating = ``;
   if (watchedMovies.length >= 20) {
@@ -45,7 +50,6 @@ const renderProfileRating = function (cards) {
   } else {
     profileRating = `novice`;
   }
-  const profileRatingField = document.querySelector(`.profile__rating`);
   profileRatingField.textContent = profileRating;
 };
 
@@ -83,10 +87,10 @@ const renderCards = (cards, node) => {
       });
     };
 
-    popupComponent.onPopupClose = () => {
+    popupComponent.onClose = () => {
       api.updateCard({id: card.id, data: card.toRAW()})
-      .then(() => {
-        cardComponent.update(card);
+      .then((newData) => {
+        cardComponent.update(newData);
         cardComponent.render();
         body.removeChild(popupComponent.element);
         popupComponent.unrender();
@@ -96,7 +100,7 @@ const renderCards = (cards, node) => {
       });
     };
 
-    popupComponent.onPopupEsc = () => {
+    popupComponent.onEsc = () => {
       api.updateCard({id: card.id, data: card.toRAW()})
       .then(() => {
         cardComponent.update(card);
@@ -128,28 +132,31 @@ const renderCards = (cards, node) => {
     popupComponent.onAddToWatchList = () => {
       card.isWatchlist = !card.isWatchlist;
       api.updateCard({id: card.id, data: card.toRAW()})
-      .then((newCard) => {
-        cardComponent.update(newCard);
+      .then(() => {
+        cardComponent.update(card);
+        popupComponent.update(card);
       });
     };
 
     popupComponent.onMarkAsWatched = () => {
       card.isWatched = !card.isWatched;
       api.updateCard({id: card.id, data: card.toRAW()})
-      .then((newCard) => {
-        cardComponent.update(newCard);
+      .then(() => {
+        cardComponent.update(card);
+        popupComponent.update(card);
       });
     };
 
     popupComponent.onMarkAsFavorite = () => {
       card.isFavorite = !card.isFavorite;
       api.updateCard({id: card.id, data: card.toRAW()})
-      .then((newCard) => {
-        cardComponent.update(newCard);
+      .then(() => {
+        cardComponent.update(card);
+        popupComponent.update(card);
       });
     };
 
-    const getCardNode = function () {
+    const getCardNode = () => {
       let cardNode;
       if (node !== cardsNode) {
         cardNode = cardComponent.render();
@@ -168,9 +175,9 @@ const renderFilters = function (filters, initialCards) {
     const filterComponent = new Filter(filter);
     filterComponent.render();
     const filteredCards = filterCards(initialCards, filter.caption.toLowerCase());
-    filterComponent.getFilterAmount(filteredCards);
+    filterComponent.getAmount(filteredCards);
     filtersNode.insertBefore(filterComponent.element, statsBtn);
-    filterComponent.onFilter = () => {
+    filterComponent.onClick = () => {
       cardsNode.innerHTML = ``;
       if (showMoreBtn.classList.contains(`visually-hidden`)) {
         showMoreBtn.classList.remove(`visually-hidden`);
@@ -187,7 +194,7 @@ const renderFilters = function (filters, initialCards) {
   }
 };
 
-const filterCards = function (cards, filterType) {
+const filterCards = (cards, filterType) => {
   switch (filterType) {
     case `all`:
       return cards;
@@ -206,21 +213,21 @@ const filterCards = function (cards, filterType) {
   }
 };
 
-const renderSearch = function (cards) {
+const renderSearch = (cards) => {
   const searchInput = new Search();
   logo.insertAdjacentElement(`afterend`, searchInput.render());
-  searchInput.onSearch = (value) => {
+  searchInput.onChange = (value) => {
     const searchedCards = cards.filter((item) => item.title.toLowerCase().includes(value.toLowerCase()));
     cardsNode.innerHTML = ``;
     renderBySets(searchedCards);
   };
 };
 
-const renderBySets = function (cards) {
+const renderBySets = (cards) => {
   let copiedArr = [];
   copiedArr = cards.concat();
   renderCards(copiedArr.splice(0, CARDS_SET), cardsNode);
-  const onShowMoreClick = function () {
+  const onShowMoreClick = () => {
     if (copiedArr.length > CARDS_SET) {
       renderCards(copiedArr.splice(0, CARDS_SET), cardsNode);
     } else if (copiedArr.length <= CARDS_SET) {
@@ -249,32 +256,17 @@ api.getCards()
   renderFilters(filtersArr, initialCards);
   renderSearch(initialCards);
 
-  const onStatsBtnClick = function (evt) {
+  const onStatsBtnClick = (evt) => {
     evt.preventDefault();
     filmsSection.classList.add(`visually-hidden`);
     statsSection.classList.remove(`visually-hidden`);
     renderChart(initialCards);
   };
-  const dayPeriod = document.getElementById(`statistic-today`);
-  dayPeriod.addEventListener(`change`, function () {
-    renderChart(cards.filter((item) => moment(item.watchingDate) === moment().subtract(1, `days`)));
-  });
-  const weekPeriod = document.getElementById(`statistic-week`);
-  weekPeriod.addEventListener(`change`, function () {
-    renderChart(cards.filter((item) => moment(item.watchingDate) > moment().subtract(7, `days`)));
-  });
-  const yearPeriod = document.getElementById(`statistic-year`);
-  yearPeriod.addEventListener(`change`, function () {
-    renderChart(cards.filter((item) => moment(item.watchingDate) > moment().subtract(1, `years`)));
-  });
-  const monthPeriod = document.getElementById(`statistic-month`);
-  monthPeriod.addEventListener(`change`, function () {
-    renderChart(cards.filter((item) => moment(item.watchingDate) > moment().subtract(1, `months`)));
-  });
-  const allTimePeriod = document.getElementById(`statistic-all-time`);
-  allTimePeriod.addEventListener(`change`, function () {
-    renderChart(cards);
-  });
+  dayPeriod.addEventListener(`change`, () => renderChart(cards.filter((item) => moment(item.watchingDate) === moment().subtract(1, `days`))));
+  weekPeriod.addEventListener(`change`, () => renderChart(cards.filter((item) => moment(item.watchingDate) > moment().subtract(7, `days`))));
+  yearPeriod.addEventListener(`change`, () => renderChart(cards.filter((item) => moment(item.watchingDate) > moment().subtract(1, `years`))));
+  monthPeriod.addEventListener(`change`, () => renderChart(cards.filter((item) => moment(item.watchingDate) > moment().subtract(1, `months`))));
+  allTimePeriod.addEventListener(`change`, () => renderChart(cards));
   statsBtn.addEventListener(`click`, onStatsBtnClick);
 }).catch(() => {
   loadMessage.remove();
